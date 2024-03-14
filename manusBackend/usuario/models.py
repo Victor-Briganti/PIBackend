@@ -11,3 +11,6 @@ class Usuario(models.Model):
     cpf = models.CharField(("CPF"), max_length=11, primary_key=True)
     email = models.CharField(("Email"), max_length=200)
     telefone = models.CharField(("Telefone"), max_length=11)
+
+    def __str__(self):
+        return str(self.cpf)
