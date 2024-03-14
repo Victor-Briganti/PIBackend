@@ -12,7 +12,7 @@ Ao utilizar a aplicação, os usuários podem filtrar os animais de acordo com s
 
 # Inicialize o ambiente virtual
 virtualenv .venv
-source .venv/bin/active
+source .venv/bin/activate
 
 # Instalação dos pacotes importantes
 pip install django
