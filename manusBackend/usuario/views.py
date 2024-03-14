@@ -5,5 +5,11 @@ from .models import Usuario
 def index(request):
     return render(request, "usuario/index.html")
 
+def contato(request):
+    return render(request, "usuario/contato.html")
+
+def sobre(request):
+    return render(request, "usuario/sobre.html")
+
 def create_view(request):
     return render(request,"usuario/create_view.html")
