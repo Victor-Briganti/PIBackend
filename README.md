@@ -70,8 +70,10 @@ Utilize uma branch com o seu nome para realizar as modificações no programa. *
 **PASSOS:**
 1. Mudar para a branch main
 2. git pull
-3. mudar para a branch com seu nome
-4. git merge <seu nome>
+3. git switch <seu nome>
+4. git merge main(Se houver conflitos resolva-os)
+5. git switch main
+6. git merge <seu nome>
 5. git push
 
 ### Pulling
