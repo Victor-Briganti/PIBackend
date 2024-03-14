@@ -16,29 +16,75 @@ source .venv/bin/activate
 
 # Instalação dos pacotes importantes
 pip install django
-```
-#posgree instalation and config
 
-#script para conf do postgres
- #instala postgres
+# Instalação do linter
+pip install pylint-django
+```
+
+### Banco de dados
+
+**Instalação:**
+
+```bash
+# Instala postgresql
 sudo apt install postgresql postgresql-contrib
 
-#depois de instalar
+# Instala o adaptador para o banco
+pip install psycopg
+```
 
-sudo -i -u postgres
+**Configuração:**
+```bash 
+sudo -i -u postgres psql
+```
 
-psql
+```SQL
+-- Cria o banco de dados
+CREATE DATABASE manusbd;
 
-#criando database (dentro do psql)
+-- Cria o usuário
+CREATE USER adm_manus WITH PASSWORD 'django8';
 
-create database manusbd;
-#criando user
+-- Configurações necessárias para o funcionamento do django
+ALTER ROLE adm_manus SET client_encoding TO 'utf8';
+ALTER ROLE adm_manus SET default_transaction_isolation TO 'read committed';
+ALTER ROLE adm_manus SET timezone TO 'UTC';
 
-create user adm_manus with password 'django8';
-alter role adm_manus set client_encoding to 'utf8'; 
-alter role adm_manus set default_transaction_isolation to 'read committed'; 
-alter role adm_manus set timezone to 'UTC';
+-- Dá privilégios aos usuários
+GRANT ALL PRIVILEGES ON DATABASE manusbd TO adm_manus;
+```
 
-GRANT all privileges on database manusbd to adm_manus;
+## Contribuindo
 
+### Mensagens de Commit
 
+Por padrão as mensagens de commit devem seguir o seguinte padrão:
+
+[Nome da funcionalidade] Titulo da modificação
+
+Breve descrição(Não passar de 3 linhas).
+
+### Commit
+Utilize uma branch com o seu nome para realizar as modificações no programa. **NÃO** suba essa branch para o github, ela deve ser de uso local.
+
+**PASSOS:**
+1. Mudar para a branch main
+2. git pull
+3. mudar para a branch com seu nome
+4. git merge <seu nome>
+5. git push
+
+### Pulling
+Ao realizar um git pull, se houve modificações se torna necessário atualizar a branch com seu nome também. Para isso siga os seguintes passos:
+
+1. git switch <seu nome>
+2. git merge main
+
+Caso houver conflito me procure(João).
+
+## Django admin
+**IMPORTANTE:** Use o comando `python manage.py createsuperuser` para criar um usuário administrador com as credendicias abaixo.
+
+Credenciais para acessar o "/admin" são as seguintes:
+- usuário: adm_manus
+- senha: django8
