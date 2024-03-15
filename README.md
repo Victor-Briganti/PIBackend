@@ -52,6 +52,10 @@ ALTER ROLE adm_manus SET timezone TO 'UTC';
 
 -- Dá privilégios aos usuários
 GRANT ALL PRIVILEGES ON DATABASE manusbd TO adm_manus;
+
+-- Versão 15 do postgresql
+-- Permite que o banco de dados seja alterado pelo administrador
+ALTER DATABASE manusbd OWNER TO adm_manus;
 ```
 
 ## Contribuindo
