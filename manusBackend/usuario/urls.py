@@ -1,10 +1,8 @@
 from django.urls import path
 
-from . import views
+from .views import UsuarioAPIView, EnderecoAPIView
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("create/", views.create_view, name="create"),,
-    path("sobre/", views.sobre, name="sobre"),
-    path("contato/", views.contato, name="contato"),
+    path("usuario/", UsuarioAPIView.as_view()),
+    path("endereco/", EnderecoAPIView.as_view()),
 ]
