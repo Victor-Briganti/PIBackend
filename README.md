@@ -29,6 +29,7 @@ source .venv/bin/activate
 
 # Instalação dos pacotes importantes
 pip install django
+pip install django_rest_framework
 
 # Instalação do linter
 pip install pylint-django
