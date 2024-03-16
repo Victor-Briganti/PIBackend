@@ -17,7 +17,7 @@
 
 Esta aplicação foi criada para simplificar a adoção de animais de estimação. Oferecendo uma plataforma intuitica que permite aos usuários visualizar perfis detalhados dos animais disponíveis.
 
-Ao utilizar a aplicação, os usuários podem filtrar os animais de acordo com suas preferências, facilitando a busca pelo companheiro perfeito. A plataforma também garante um processo de adoção transparente e responsável, desde o cadastro inicial até o acompanhamento pós-adotivo.
+Ao utilizar a aplicação, os usuários podem filtrar os animais de acordo com suas preferências, facilitando a busca pelo companheiro perfeito. A plataforma também garante um processo de adoção transparente e responsável.
 
 ## Instalação
 
@@ -94,13 +94,13 @@ Utilize uma branch com o seu nome para realizar as modificações no programa. *
 **PASSOS:**
 1. git switch main
 2. git pull
-3. git merge <seu nome>
+3. git merge __seu nome__
 4. git push
 
 ### Pulling
 Ao realizar um git pull, se houve modificações se torna necessário atualizar a branch com seu nome também. Para isso siga os seguintes passos:
 
-1. git switch <seu nome>
+1. git switch __seu nome__
 2. git merge main
 
 Caso houver conflito me procure(João).
