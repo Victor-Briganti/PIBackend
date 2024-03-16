@@ -68,16 +68,15 @@ Breve descrição(Não passar de 3 linhas).
 Utilize uma branch com o seu nome para realizar as modificações no programa. **NÃO** suba essa branch para o github, ela deve ser de uso local.
 
 **PASSOS:**
-1. Mudar para a branch main
+1. git switch main
 2. git pull
-3. mudar para a branch com seu nome
-4. git merge <seu nome>
-5. git push
+3. git merge __seu nome__
+4. git push
 
 ### Pulling
 Ao realizar um git pull, se houve modificações se torna necessário atualizar a branch com seu nome também. Para isso siga os seguintes passos:
 
-1. git switch <seu nome>
+1. git switch __seu nome__
 2. git merge main
 
 Caso houver conflito me procure(João).
