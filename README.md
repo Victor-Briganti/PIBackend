@@ -1,5 +1,18 @@
 # Manus ONG (Projeto Integrador)
 
+## Tecnologias
+<p align="center">
+    <img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white"/>
+    <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white"/>
+</p>
+
+## Participantes
+
+- João Victor Briganti de Oliveira
+- Pedro Conrado Negreiro da Silva
+- Augusto Maccagnan Mendes 
+- Matheus Floriano Saito da Silva
+
 ## Sobre
 
 Esta aplicação foi criada para simplificar a adoção de animais de estimação. Oferecendo uma plataforma intuitica que permite aos usuários visualizar perfis detalhados dos animais disponíveis.
@@ -60,6 +73,13 @@ ALTER DATABASE manusbd OWNER TO adm_manus;
 
 ## Contribuindo
 
+### Migrate
+O django faz boa parte da administração do banco de dados, por esse motivo sempre antes de dar um novo commit, certifique-se de executar os seguintes passos: 
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
 ### Mensagens de Commit
 
 Por padrão as mensagens de commit devem seguir o seguinte padrão:
@@ -72,11 +92,10 @@ Breve descrição(Não passar de 3 linhas).
 Utilize uma branch com o seu nome para realizar as modificações no programa. **NÃO** suba essa branch para o github, ela deve ser de uso local.
 
 **PASSOS:**
-1. Mudar para a branch main
+1. git switch main
 2. git pull
-3. mudar para a branch com seu nome
-4. git merge <seu nome>
-5. git push
+3. git merge <seu nome>
+4. git push
 
 ### Pulling
 Ao realizar um git pull, se houve modificações se torna necessário atualizar a branch com seu nome também. Para isso siga os seguintes passos:
