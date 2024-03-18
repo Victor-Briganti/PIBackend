@@ -1,12 +1,9 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from .views import UsuarioViewSet
-
-router = routers.DefaultRouter()
-router.register("usuarios", UsuarioViewSet)
+from .views import usuario_list, usuario_detail
 
 urlpatterns = [
-    path("", include(router.urls)),
-    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    path("", usuario_list),
+    path("<str:email>", usuario_detail),
 ]
