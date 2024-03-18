@@ -1,4 +1,4 @@
-# Manus ONG (Projeto Integrador)
+# Adopet ONG (Projeto Integrador)
 
 ## Tecnologias
 <p align="center">
@@ -29,7 +29,7 @@ source .venv/bin/activate
 
 # Instalação dos pacotes importantes
 pip install django
-pip install django_rest_framework
+pip install djangorestframework
 
 # Instalação do linter
 pip install pylint-django
@@ -54,22 +54,22 @@ sudo -i -u postgres psql
 
 ```SQL
 -- Cria o banco de dados
-CREATE DATABASE manusbd;
+CREATE DATABASE adopetbd;
 
 -- Cria o usuário
-CREATE USER adm_manus WITH PASSWORD 'django8';
+CREATE USER adm_adopet WITH PASSWORD 'django8';
 
 -- Configurações necessárias para o funcionamento do django
-ALTER ROLE adm_manus SET client_encoding TO 'utf8';
-ALTER ROLE adm_manus SET default_transaction_isolation TO 'read committed';
-ALTER ROLE adm_manus SET timezone TO 'UTC';
+ALTER ROLE adm_adopet SET client_encoding TO 'utf8';
+ALTER ROLE adm_adopet SET default_transaction_isolation TO 'read committed';
+ALTER ROLE adm_adopet SET timezone TO 'UTC';
 
 -- Dá privilégios aos usuários
-GRANT ALL PRIVILEGES ON DATABASE manusbd TO adm_manus;
+GRANT ALL PRIVILEGES ON DATABASE adopetbd TO adm_adopet;
 
 -- Versão 15 do postgresql
 -- Permite que o banco de dados seja alterado pelo administrador
-ALTER DATABASE manusbd OWNER TO adm_manus;
+ALTER DATABASE adopetbd OWNER TO adm_adopet;
 ```
 
 ## Contribuindo
@@ -110,5 +110,5 @@ Caso houver conflito me procure(João).
 **IMPORTANTE:** Use o comando `python manage.py createsuperuser` para criar um usuário administrador com as credendicias abaixo.
 
 Credenciais para acessar o "/admin" são as seguintes:
-- usuário: adm_manus
+- usuário: adm_adopet
 - senha: django8
