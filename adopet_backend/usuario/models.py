@@ -16,3 +16,6 @@ class Usuario(models.Model):
     email = models.EmailField()
     senha = models.CharField(max_length=50)
     administrador = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.nome + ' ' + self.sobrenome
