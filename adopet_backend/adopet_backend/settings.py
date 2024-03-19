@@ -27,6 +27,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Cross-Origin Resource Sharing (CORS)
+# Usado para definir as "origins" que podem acessar a API
+# https://pypi.org/project/django-cors-headers/
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost',
+    'http://127.0.0.1',
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -39,9 +49,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'usuario.apps.UsuarioConfig',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -86,6 +98,19 @@ DATABASES = {
         }
 }
 
+# Autenticação de Usuários
+# Modelo de usuário é usado para autenticação
+# AUTH_USER_MODEL = 'usuario.Usuario'
+
+# Configura as permissões de autenticação e permissão
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
