@@ -100,7 +100,7 @@ DATABASES = {
 
 # Autenticação de Usuários
 # Modelo de usuário é usado para autenticação
-# AUTH_USER_MODEL = 'usuario.Usuario'
+AUTH_USER_MODEL = 'usuario.Usuario'
 
 # Configura as permissões de autenticação e permissão
 REST_FRAMEWORK = {
