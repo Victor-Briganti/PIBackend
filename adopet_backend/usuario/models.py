@@ -75,3 +75,21 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return str(self.email)
+
+class animais():
+    idade = models.IntegerField
+    nome = models.CharField(max_length = 200)
+    pelagem = models.CharField(max_length = 200)
+    adotado = models.BooleanField(default = False)
+    raca = models.CharField(max_length = 100, null=True,blank=True)
+    genero = models.CharField(max_length=100)
+    
+
+class gato():
+    temperamento = models.CharField(max_length=100)
+    idAnimal = models.ForeignKey(animais, on_delete=models.CASCADE,null=True)
+
+class cachorro():
+    porte = models.CharField(max_length = 100)
+    temperamento = models.CharField(max_length = 100)
+    idAnimal = models.ForeignKey(animais, on_delete=models.CASCADE,null=True)
