@@ -9,6 +9,7 @@ from rest_framework import status, permissions
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from .models import Usuario
 
 from .serializers import (
     UsuarioSerializer,
@@ -51,10 +52,15 @@ class UsuarioLogin(APIView):
         assert validate_email(data)
         assert validate_password(data)
         serializer = UsuarioLoginSerializer(data=request.data)
+        
         if serializer.is_valid(raise_exception=True):
+            usuario = Usuario.objects.get(email=serializer.data['email'])
+            if usuario.is_active is False:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
             user = serializer.validated_data
             login(request, user)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
 
 
 class UsuarioLogout(APIView):
@@ -66,6 +72,51 @@ class UsuarioLogout(APIView):
     def post(self, request):
         logout(request)
         return Response(status=status.HTTP_200_OK)
+
+class UsuarioDelete(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        serializer = UsuarioSerializer(request.user)
+        usuario = Usuario.objects.get(id=serializer.data['id']) 
+        usuario.is_active = False
+        usuario.save()
+        return Response(usuario.is_active, status=status.HTTP_200_OK)
+    
+class UsuarioUpdate(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        serializer = UsuarioSerializer(request.user)
+        usuario = Usuario.objects.get(id=serializer.data['id'])
+        if not usuario:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        
+        email = request.data.get('email', None)
+        if email:
+            usuario.email = email
+            usuario.save()
+
+        name = request.data.get('name', None)
+        if name:
+            usuario.name = name
+            usuario.save()
+
+        surname = request.data.get('surname', None)
+        if surname:
+            usuario.surname = surname
+            usuario.save()
+
+        password = request.data.get('password', None)
+        if password:
+            usuario.password = password
+            usuario.save()
+
+        return Response(status=status.HTTP_200_OK)
+                
+
 
 
 class UsuarioView(APIView):
