@@ -87,9 +87,9 @@ class animais():
 
 class gato():
     temperamento = models.CharField(max_length=100)
-    idAnimal = models.ForeignKey(animais, on_delete=models.CASCADE,null=True)
+    idAnimal = models.ForeignKey('animais', on_delete=models.CASCADE,null=True)
 
 class cachorro():
     porte = models.CharField(max_length = 100)
     temperamento = models.CharField(max_length = 100)
-    idAnimal = models.ForeignKey(animais, on_delete=models.CASCADE,null=True)
+    idAnimal = models.ForeignKey('animais', on_delete=models.CASCADE,null=True)
