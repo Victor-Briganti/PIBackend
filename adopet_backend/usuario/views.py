@@ -77,11 +77,12 @@ class UsuarioDelete(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-    def post(self, request):
+    def delete(self, request):
         serializer = UsuarioSerializer(request.user)
         usuario = Usuario.objects.get(id=serializer.data['id']) 
         usuario.is_active = False
         usuario.save()
+        logout(request)
         return Response(usuario.is_active, status=status.HTTP_200_OK)
     
 class UsuarioUpdate(APIView):
