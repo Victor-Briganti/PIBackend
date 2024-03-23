@@ -6,25 +6,22 @@ from django.contrib.auth import get_user_model, authenticate
 UserModel = get_user_model()
 
 
-class UsuarioSignupSerializer(serializers.ModelSerializer):
+class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = "__all__"
 
     def create(self, validated_data):
-        usuario = UserModel.objects.create_user(
+        user = UserModel.objects.create_user(
             email=validated_data["email"],
             password=validated_data["password"],
-            name=validated_data["name"],
-            surname=validated_data["surname"],
+            firstname=validated_data["firstname"],
+            lastname=validated_data["lastname"],
         )
-        usuario.name = validated_data["name"]
-        usuario.surname = validated_data["surname"]
-        usuario.save()
-        return usuario
+        return user
 
 
-class UsuarioLoginSerializer(serializers.Serializer):
+class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(
         style={"input_type": "password"}, trim_whitespace=False
@@ -50,7 +47,7 @@ class UsuarioLoginSerializer(serializers.Serializer):
         return user
 
 
-class UsuarioSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = "__all__"

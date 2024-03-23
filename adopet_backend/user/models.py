@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 # Create your models here.
 
 
-class UsuarioManager(BaseUserManager):
+class UserManager(BaseUserManager):
     """
     Gerenciador de usuário para o modelo de usuário customizado.
     Necessário para criar usuários com o modelo de usuário customizado.
@@ -34,33 +34,32 @@ class UsuarioManager(BaseUserManager):
         return user
 
 
-class Usuario(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin):
     """
     Modelo de usuário customizado.
     Usado para extender a classe de usuário padrão do Django.
     """
 
     email = models.EmailField(unique=True)
-    name = models.CharField(max_length=100)
-    surname = models.CharField(max_length=100)
+    firstname = models.CharField(max_length=100)
+    lastname = models.CharField(max_length=100)
     # Campo usado para desativar usuários
     is_active = models.BooleanField(default=True)
     # Determina se o usuário tem acesso ao painel de administração
     is_staff = models.BooleanField(default=False)
 
     # Sobrescreve o campo objects com um outro gerenciador de usuário
-    objects = UsuarioManager()
+    objects = UserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["name", "surname"]
+    REQUIRED_FIELDS = ["firstname", "lastname"]
 
     groups = models.ManyToManyField(
         Group,
         verbose_name="groups",
         blank=True,
-        help_text="The groups this user belongs to. A user will get \
-                   all permissions granted to each of their groups.",
-        related_name="usuario_groups",
+        help_text="Grupo que este usuário pertece. Um usuário irá conseguir todas as permissões de seu grupo.",
+        related_name="user_groups",
         related_query_name="user",
     )
 
@@ -68,28 +67,10 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         Permission,
         verbose_name="user permissions",
         blank=True,
-        help_text="Specific permissions for this user.",
-        related_name="usuario_user_permissions",
+        help_text="Especifica as permissões de usuário.",
+        related_name="user_user_permissions",
         related_query_name="user",
     )
 
     def __str__(self):
         return str(self.email)
-
-class animais():
-    idade = models.IntegerField
-    nome = models.CharField(max_length = 200)
-    pelagem = models.CharField(max_length = 200)
-    adotado = models.BooleanField(default = False)
-    raca = models.CharField(max_length = 100, null=True,blank=True)
-    genero = models.CharField(max_length=100)
-    
-
-class gato():
-    temperamento = models.CharField(max_length=100)
-    idAnimal = models.ForeignKey('animais', on_delete=models.CASCADE,null=True)
-
-class cachorro():
-    porte = models.CharField(max_length = 100)
-    temperamento = models.CharField(max_length = 100)
-    idAnimal = models.ForeignKey('animais', on_delete=models.CASCADE,null=True)

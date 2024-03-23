@@ -11,13 +11,13 @@ from django.core.validators import EmailValidator
 UserModel = get_user_model()
 
 
-def custom_validation(validated_data):
+def user_validation(validated_data):
     """
     Valida os todo os campos para um novo usuário.
     """
     email = validated_data["email"].strip()
-    name = validated_data["name"].strip()
-    surname = validated_data["surname"].strip()
+    firstname = validated_data["firstname"].strip()
+    lastname = validated_data["lastname"].strip()
     password = validated_data["password"].strip()
 
     if not email or UserModel.objects.filter(email=email).exists():
@@ -26,11 +26,11 @@ def custom_validation(validated_data):
     if not password or len(password) < 8:
         raise ValidationError("A senha é inválida.")
 
-    if not name:
-        raise ValidationError("O nome é inválido.")
+    if not firstname:
+        raise ValidationError("Primeiro nome é inválido.")
 
-    if not surname:
-        raise ValidationError("O sobrenome é inválido.")
+    if not lastname:
+        raise ValidationError("Último nome é inválido.")
 
     return validated_data
 

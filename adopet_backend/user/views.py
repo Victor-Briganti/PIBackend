@@ -9,16 +9,15 @@ from rest_framework import status, permissions
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Usuario
 
+from .models import User
 from .serializers import (
-    UsuarioSerializer,
-    UsuarioLoginSerializer,
-    UsuarioSignupSerializer,
+    UserSerializer,
+    UserLoginSerializer,
+    UserRegisterSerializer,
 )
-
 from .validation import (
-    custom_validation,
+    user_validation,
     validate_email,
     validate_password,
 )
@@ -26,22 +25,22 @@ from .validation import (
 # Create your views here.
 
 
-class UsuarioSignup(APIView):
+class UserRegister(APIView):
     # Define as permissões de acesso a essa API.
     # AllowAny: Qualquer usuário pode acessar.
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        data = custom_validation(request.data)
-        serializer = UsuarioSignupSerializer(data=data)
+        data = user_validation(request.data)
+        serializer = UserRegisterSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
-            usuario = serializer.save()
-            if usuario:
+            user = serializer.save()
+            if user:
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UsuarioLogin(APIView):
+class UserLogin(APIView):
     permission_classes = (permissions.AllowAny,)
     # Define o tipo de autenticação usado pela API.
     # SessionAuthentication: Autenticação por sessão.
@@ -51,19 +50,18 @@ class UsuarioLogin(APIView):
         data = request.data
         assert validate_email(data)
         assert validate_password(data)
-        serializer = UsuarioLoginSerializer(data=request.data)
-        
+        serializer = UserLoginSerializer(data=request.data)
+
         if serializer.is_valid(raise_exception=True):
-            usuario = Usuario.objects.get(email=serializer.data['email'])
-            if usuario.is_active is False:
+            user = User.objects.get(email=serializer.data["email"])
+            if user.is_active is False:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
             user = serializer.validated_data
             login(request, user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        
 
 
-class UsuarioLogout(APIView):
+class UserLogout(APIView):
     # Define as permissões de acesso a essa API.
     # IsAuthenticated: Somente usuários autenticados podem acessar.
     permission_classes = (permissions.IsAuthenticated,)
@@ -73,57 +71,39 @@ class UsuarioLogout(APIView):
         logout(request)
         return Response(status=status.HTTP_200_OK)
 
-class UsuarioDelete(APIView):
+
+class UserDelete(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
     def delete(self, request):
-        serializer = UsuarioSerializer(request.user)
-        usuario = Usuario.objects.get(id=serializer.data['id']) 
-        usuario.is_active = False
-        usuario.save()
+        serializer = UserSerializer(request.user)
+        user = User.objects.get(id=serializer.data["id"])
+        user.is_active = False
+        user.save()
         logout(request)
-        return Response(usuario.is_active, status=status.HTTP_200_OK)
-    
-class UsuarioUpdate(APIView):
+        return Response(user.is_active, status=status.HTTP_200_OK)
+
+
+class UserUpdate(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-    def post(self, request):
-        serializer = UsuarioSerializer(request.user)
-        usuario = Usuario.objects.get(id=serializer.data['id'])
-        if not usuario:
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        
-        email = request.data.get('email', None)
-        if email:
-            usuario.email = email
-            usuario.save()
-
-        name = request.data.get('name', None)
-        if name:
-            usuario.name = name
-            usuario.save()
-
-        surname = request.data.get('surname', None)
-        if surname:
-            usuario.surname = surname
-            usuario.save()
-
-        password = request.data.get('password', None)
-        if password:
-            usuario.password = password
-            usuario.save()
-
-        return Response(status=status.HTTP_200_OK)
-                
+    def put(self, request):
+        data = request.data
+        user = User.objects.get(id=data["id"])
+        serializer = UserSerializer(user, data=data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.save()
+            if user:
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-class UsuarioView(APIView):
+class UserView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
     def get(self, request):
-        serializer = UsuarioSerializer(request.user)
+        serializer = UserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
