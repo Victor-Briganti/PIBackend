@@ -35,7 +35,7 @@ class TemperamentAnimal(models.Model):
         ("territorial", "Territorial"),
     ]
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True, choices=TEMPERAMENT_CHOICES)
 
     def __str__(self):
         return str(self.name)
@@ -53,13 +53,19 @@ class Animal(models.Model):
         ("large", "Grande porte"),
     ]
 
+    GENDER_CHOICES = [
+        ("M", "Macho"),
+        ("F", "Fêmea"),
+    ]
+
     name = models.CharField(max_length=100)
     age = models.IntegerField(null=True, blank=True)
+    specie = models.CharField(max_length=100, choices=SPECIE_CHOICES)
+    genre = models.CharField(max_length=100, choices=GENDER_CHOICES)
+    size = models.CharField(max_length=100, choices=SIZE_CHOICES, null=True, blank=True)
     temperament = models.ManyToManyField(TemperamentAnimal, blank=True)
     coat = models.CharField(max_length=100)
     weight = models.FloatField(null=True, blank=True)
-    size = models.CharField(max_length=100, choices=SIZE_CHOICES, null=True, blank=True)
-    specie = models.CharField(max_length=100, choices=SPECIE_CHOICES)
     adoption_date = models.DateTimeField(null=True, blank=True)
     description = models.TextField()
     is_house_trained = models.BooleanField()

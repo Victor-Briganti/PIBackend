@@ -11,7 +11,7 @@ from django.core.validators import EmailValidator
 UserModel = get_user_model()
 
 
-def user_validation(validated_data):
+def validate_user(validated_data):
     """
     Valida os todo os campos para um novo usuário.
     """

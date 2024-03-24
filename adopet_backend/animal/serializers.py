@@ -17,8 +17,7 @@ class TemperamentAnimalSerializer(serializers.ModelSerializer):
 
 
 class AnimalSerializer(serializers.ModelSerializer):
-    images = ImageAnimalSerializer(many=True, read_only=True)
-    temperament = TemperamentAnimalSerializer(many=True, read_only=True)
+    temperament = TemperamentAnimalSerializer(many=True)
 
     class Meta:
         model = Animal

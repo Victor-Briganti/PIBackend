@@ -17,7 +17,7 @@ from .serializers import (
     UserRegisterSerializer,
 )
 from .validation import (
-    user_validation,
+    validate_user,
     validate_email,
     validate_password,
 )
@@ -31,7 +31,7 @@ class UserRegister(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        data = user_validation(request.data)
+        data = validate_user(request.data)
         serializer = UserRegisterSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
