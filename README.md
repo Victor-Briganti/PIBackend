@@ -28,11 +28,7 @@ virtualenv .venv
 source .venv/bin/activate
 
 # Instalação dos pacotes importantes
-pip install django
-pip install djangorestframework
-
-# Instalação do linter
-pip install pylint-django
+pip install -r requirements.txt
 ```
 
 ### Banco de dados
@@ -42,9 +38,6 @@ pip install pylint-django
 ```bash
 # Instala postgresql
 sudo apt install postgresql postgresql-contrib
-
-# Instala o adaptador para o banco
-pip install psycopg
 ```
 
 **Configuração:**
