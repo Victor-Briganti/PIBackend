@@ -17,7 +17,7 @@ class TemperamentAnimalSerializer(serializers.ModelSerializer):
 
 
 class AnimalSerializer(serializers.ModelSerializer):
-    temperament = TemperamentAnimalSerializer(many=True)
+    temperament = TemperamentAnimalSerializer(many=True, read_only=True)
 
     class Meta:
         model = Animal

@@ -7,7 +7,7 @@ urlpatterns = [
     path("<int:pk>", views.AnimalDetail.as_view(), name="animal_detail"),
     path("register/", views.AnimalRegister.as_view(), name="animal_register"),
     path("delete/<int:pk>", views.AnimalDelete.as_view(), name="animal_delete"),
-    path("update/", views.AnimalUpdate.as_view(), name="animal_update"),
+    path("update/<int:pk>", views.AnimalUpdate.as_view(), name="animal_update"),
     path(
         "temperament/", views.TemperamentAnimalList.as_view(), name="temperament_list"
     ),
@@ -27,7 +27,7 @@ urlpatterns = [
         name="temperament_delete",
     ),
     path(
-        "temperament/update/",
+        "temperament/update/<int:pk>",
         views.TemperamentAnimalUpdate.as_view(),
         name="temperament_update",
     ),

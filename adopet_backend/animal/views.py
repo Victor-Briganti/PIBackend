@@ -80,15 +80,24 @@ class AnimalUpdate(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-    def put(self, request):
-        data = request.data
+    def put(self, request, pk):
+        animal_data = {
+            key: value for key, value in request.data.items() if key != "temperament"
+        }
+        temperament_data = validate_temperament(request.data["temperament"])
 
         try:
-            animal = Animal.objects.get(pk=data["id"], is_active=True)
+            animal = Animal.objects.get(pk=pk, is_active=True)
         except Animal.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        serializer = AnimalSerializer(animal, data=data, partial=True)
+        temperaments = []
+        for temperament in temperament_data:
+            temperaments.append(TemperamentAnimal.objects.get(name=temperament["name"]))
+
+        animal.temperament.set(temperaments)
+
+        serializer = AnimalSerializer(animal, data=animal_data, partial=True)
         if serializer.is_valid(raise_exception=True):
             animal = serializer.save()
             if animal:
