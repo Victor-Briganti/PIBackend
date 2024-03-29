@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-
+from django.core.validators import (
+    MinValueValidator,
+)  # Verificador usado para limitar valores negativos
 
 # Create your models here.
 
@@ -8,7 +10,7 @@ from django.core.exceptions import ValidationError
 class TemperamentAnimal(models.Model):
     """
     Representa o tipo de temperamento que um animal pode ter.
-    Alguns temperamentos não devem ser usados juntos, para isso defina-os em 
+    Alguns temperamentos não devem ser usados juntos, para isso defina-os em
     "validation.py".
     """
 
@@ -53,13 +55,18 @@ class Animal(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    age = models.IntegerField(null=True, blank=True)
+    age = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(0)])
     specie = models.CharField(max_length=100, choices=SPECIE_CHOICES)
     genre = models.CharField(max_length=100, choices=GENDER_CHOICES)
-    size = models.CharField(max_length=100, choices=SIZE_CHOICES, null=True, blank=True)
+    size = models.CharField(
+        max_length=100,
+        choices=SIZE_CHOICES,
+        null=True,
+        blank=True,
+    )
     temperament = models.ManyToManyField(TemperamentAnimal, blank=True)
     coat = models.CharField(max_length=100)
-    weight = models.FloatField(null=True, blank=True)
+    weight = models.FloatField(null=True, blank=True, validators=[MinValueValidator(0)])
     adoption_date = models.DateTimeField(null=True, blank=True)
     description = models.TextField()
     is_house_trained = models.BooleanField()
