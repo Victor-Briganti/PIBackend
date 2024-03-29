@@ -17,8 +17,7 @@ class Migration(migrations.Migration):
             name='ImageAnimal',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(default='media/image/default_cat.jpg', upload_to='image/')),
-                ('is_default', models.BooleanField(default=False, validators=[animal.models.validate_file_size])),
+                ('image', models.ImageField(default='media/image/default_cat.jpg', upload_to='image/'))
             ],
         ),
         migrations.CreateModel(

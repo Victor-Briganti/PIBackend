@@ -1,11 +1,12 @@
 """
-Funções de validação para os campos do modelo Usuário.
+Funções de validação para os campos do modelo Temperament.
 """
 
 from django.core.exceptions import ValidationError
 
 from .models import Animal, TemperamentAnimal
 
+# Combinações de temperamentos inválidas.
 INVALID_TEMPERAMENT_COMBINATIONS = [
     {"aggressive", "friendly"},
     {"aggressive", "affectionate"},

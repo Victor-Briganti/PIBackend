@@ -9,6 +9,7 @@ from rest_framework import status, permissions
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.core.exceptions import ValidationError
 
 from .models import User
 from .serializers import (
@@ -26,12 +27,19 @@ from .validation import (
 
 
 class UserRegister(APIView):
+    """
+    Registra um usuário comum na aplicação.
+    """
+
     # Define as permissões de acesso a essa API.
     # AllowAny: Qualquer usuário pode acessar.
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        data = validate_user(request.data)
+        try:
+            data = validate_user(request.data)
+        except ValidationError as err:
+            return Response(err, status=status.HTTP_400_BAD_REQUEST) 
         serializer = UserRegisterSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
@@ -41,6 +49,12 @@ class UserRegister(APIView):
 
 
 class UserLogin(APIView):
+    """
+    Loga o usuário no sistema.
+    Qualquer outra view que dependa de verificações de segurança
+    depende desse endpoint sendo executado primeiro.
+    """
+
     permission_classes = (permissions.AllowAny,)
     # Define o tipo de autenticação usado pela API.
     # SessionAuthentication: Autenticação por sessão.
@@ -48,8 +62,13 @@ class UserLogin(APIView):
 
     def post(self, request):
         data = request.data
-        assert validate_email(data)
-        assert validate_password(data)
+
+        try:
+            validate_email(data)
+            validate_password(data)
+        except ValidationError as err:
+            return Response(err, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = UserLoginSerializer(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
@@ -60,8 +79,15 @@ class UserLogin(APIView):
             login(request, user)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class UserLogout(APIView):
+    """
+    Desloga o usuário.
+    Remove a sessionid atual do usuário.
+    """
+
     # Define as permissões de acesso a essa API.
     # IsAuthenticated: Somente usuários autenticados podem acessar.
     permission_classes = (permissions.IsAuthenticated,)
@@ -73,6 +99,11 @@ class UserLogout(APIView):
 
 
 class UserDelete(APIView):
+    """
+    Desativa o usuário do sistema.
+    Nenhum endpoint de delete, realmente deleta o objeto do banco, apenas não o ativa.
+    """
+
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
@@ -86,6 +117,11 @@ class UserDelete(APIView):
 
 
 class UserUpdate(APIView):
+    """
+    Atualiza as informações do usuário.
+    Espera que todas as informações do usuário sejam passadas, não somente o que se deseja atualizar.
+    """
+
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
@@ -100,7 +136,11 @@ class UserUpdate(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserView(APIView):
+class UserDetail(APIView):
+    """
+    Retorna o usuário autenticado atual.
+    """
+
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 

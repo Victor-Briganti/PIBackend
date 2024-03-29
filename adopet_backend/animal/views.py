@@ -6,10 +6,9 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Animal, ImageAnimal, TemperamentAnimal
+from .models import Animal, TemperamentAnimal
 from .serializers import (
     AnimalSerializer,
-    ImageAnimalSerializer,
     TemperamentAnimalSerializer,
 )
 from .validation import validate_temperament
@@ -18,6 +17,11 @@ from .validation import validate_temperament
 
 
 class AnimalList(APIView):
+    """
+    Lista todos os animais disponíveis para adoção.
+    Para isso é necessário verificar se o mesmo está ativo(is_active).
+    """
+
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request):
@@ -27,9 +31,14 @@ class AnimalList(APIView):
 
 
 class AnimalDetail(APIView):
+    """
+    Retorna um animal em especifíco.
+    Para isso é necessário verificar se o mesmo está ativo(is_active).
+    """
+
     permission_classes = (permissions.AllowAny,)
 
-    def get(self, request, pk):
+    def get(self, _, pk):
         try:
             animal = Animal.objects.get(pk=pk, is_active=True)
         except Animal.DoesNotExist:
@@ -39,24 +48,37 @@ class AnimalDetail(APIView):
 
 
 class AnimalRegister(APIView):
+    """
+    Registra um novo animal para adoção.
+    """
+
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
+        # Dividi os dados do request em duas partes, uma para o animal e outra para o temperamento
         animal_data = {
             key: value for key, value in request.data.items() if key != "temperament"
         }
         temperament_data = validate_temperament(request.data["temperament"])
 
-        # Create the Animal instance without assigning the temperament field
-        animal = Animal.objects.create(**animal_data)
-
-        animal.save()
-
+        # Verifica os temperamentos passados
         temperaments = []
         for temperament in temperament_data:
-            temperaments.append(TemperamentAnimal.objects.get(name=temperament["name"]))
+            try:
+                temperaments.append(
+                    TemperamentAnimal.objects.get(name=temperament["name"])
+                )
+            except TemperamentAnimal.DoesNotExist:
+                return Response(
+                    "Temperamento não encontrado", status=status.HTTP_404_NOT_FOUND
+                )
 
+        # Cria o animal e salva no banco de dados
+        animal = Animal.objects.create(**animal_data)
+        animal.save()
+
+        # Adiciona os temperamentos ao animal
         animal.temperament.set(temperaments)
 
         serializer = AnimalSerializer(animal)
@@ -64,23 +86,33 @@ class AnimalRegister(APIView):
 
 
 class AnimalDelete(APIView):
+    """
+    Desativa o animal especificado.
+    """
+
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-    def delete(self, request, pk):
+    def delete(self, _, pk):
         animal = Animal.objects.get(pk=pk)
         if animal:
             animal.is_active = False
             animal.save()
             return Response(status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response("Animal não encontrado", status=status.HTTP_404_NOT_FOUND)
 
 
 class AnimalUpdate(APIView):
+    """
+    Atualiza os valores do animal especificado.
+    Nessa chamada se espera que todos os valores antigos também sejam passados.
+    """
+
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
     def put(self, request, pk):
+        # Dividi os dados do request em duas partes, uma para o animal e outra para o temperamento
         animal_data = {
             key: value for key, value in request.data.items() if key != "temperament"
         }
@@ -89,12 +121,21 @@ class AnimalUpdate(APIView):
         try:
             animal = Animal.objects.get(pk=pk, is_active=True)
         except Animal.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response("Animal não encontrado", status=status.HTTP_404_NOT_FOUND)
 
+        # Verifica os temperamentos passados
         temperaments = []
         for temperament in temperament_data:
-            temperaments.append(TemperamentAnimal.objects.get(name=temperament["name"]))
+            try:
+                temperaments.append(
+                    TemperamentAnimal.objects.get(name=temperament["name"])
+                )
+            except TemperamentAnimal.DoesNotExist:
+                return Response(
+                    "Temperamento não encontrado", status=status.HTTP_404_NOT_FOUND
+                )
 
+        # Insere os novos temperamentos passados
         animal.temperament.set(temperaments)
 
         serializer = AnimalSerializer(animal, data=animal_data, partial=True)
@@ -106,6 +147,10 @@ class AnimalUpdate(APIView):
 
 
 class TemperamentAnimalList(APIView):
+    """
+    Lista todos os temperamentos disponíveis para um animal.
+    """
+
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request):
@@ -115,18 +160,29 @@ class TemperamentAnimalList(APIView):
 
 
 class TemperamentAnimalDetail(APIView):
+    """
+    Retorna somente um temperamento específico.
+    """
+
     permission_classes = (permissions.AllowAny,)
 
-    def get(self, request, pk):
+    def get(self, _, pk):
         try:
             temperament = TemperamentAnimal.objects.get(pk=pk)
         except TemperamentAnimal.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                "Temperamento não encontrado", status=status.HTTP_404_NOT_FOUND
+            )
         serializer = TemperamentAnimalSerializer(temperament)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class TemperamentAnimalCreate(APIView):
+class TemperamentAnimalRegister(APIView):
+    """
+    Registra um novo temperamento que poderá ser usado pelos animais.
+    Os valores válidos para temperamento são encontrados em "models.py"
+    """
+
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
@@ -141,6 +197,11 @@ class TemperamentAnimalCreate(APIView):
 
 
 class TemperamentAnimalUpdate(APIView):
+    """
+    Atualiza o valor de um temperamento.
+    Os valores válidos para temperamento são encontrados em "models.py"
+    """
+
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
@@ -149,7 +210,9 @@ class TemperamentAnimalUpdate(APIView):
         try:
             temperament = TemperamentAnimal.objects.get(pk=pk)
         except TemperamentAnimal.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                "Temperamento não encontrado.", status=status.HTTP_404_NOT_FOUND
+            )
         serializer = TemperamentAnimalSerializer(temperament, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
             temperament = serializer.save()
@@ -159,12 +222,19 @@ class TemperamentAnimalUpdate(APIView):
 
 
 class TemperamentAnimalDelete(APIView):
+    """
+    Deleta um temperamento
+    """
+
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
 
-    def delete(self, request, pk):
+    def delete(self, _, pk):
         temperament = TemperamentAnimal.objects.get(pk=pk)
         if temperament:
             temperament.delete()
             return Response(status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            "Não foi possível excluir o temperamento. Verifique se o mesmo é válido.",
+            status=status.HTTP_404_NOT_FOUND,
+        )

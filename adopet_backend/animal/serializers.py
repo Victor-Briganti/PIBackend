@@ -1,13 +1,14 @@
+"""
+    Definição dos Serializers para a API de Animal.
+
+    Serializers são responsáveis por serializar e desserializar os 
+    objetos do Django para JSON e vice-versa.
+"""
+
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 
-from .models import ImageAnimal, TemperamentAnimal, Animal
-
-
-class ImageAnimalSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ImageAnimal
-        fields = "__all__"
+from .models import TemperamentAnimal, Animal
 
 
 class TemperamentAnimalSerializer(serializers.ModelSerializer):

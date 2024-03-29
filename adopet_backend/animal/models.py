@@ -5,24 +5,13 @@ from django.core.exceptions import ValidationError
 # Create your models here.
 
 
-def validate_file_size(value):
-    filesize = value.size
-    max_file_size = 1024000
-    if filesize > max_file_size:
-        raise ValidationError("O tamanho máximo de upload de imagem é 1MB")
-    else:
-        return value
-
-
-class ImageAnimal(models.Model):
-    image = models.ImageField(upload_to="image/", default="media/image/default_cat.jpg")
-    is_default = models.BooleanField(default=False, validators=[validate_file_size])
-
-    def __str__(self):
-        return str(self.image)
-
-
 class TemperamentAnimal(models.Model):
+    """
+    Representa o tipo de temperamento que um animal pode ter.
+    Alguns temperamentos não devem ser usados juntos, para isso defina-os em 
+    "validation.py".
+    """
+
     TEMPERAMENT_CHOICES = [
         ("affectionate", "Dengoso"),
         ("aggressive", "Agressivo"),
@@ -35,6 +24,7 @@ class TemperamentAnimal(models.Model):
         ("territorial", "Territorial"),
     ]
 
+    # "choices" é o campo usado para definir os tipos que são permitidos para o campo.
     name = models.CharField(max_length=100, unique=True, choices=TEMPERAMENT_CHOICES)
 
     def __str__(self):
@@ -42,6 +32,10 @@ class TemperamentAnimal(models.Model):
 
 
 class Animal(models.Model):
+    """
+    Representa um animal que pode ser adotado.
+    """
+
     SPECIE_CHOICES = [
         ("dog", "Cachorro"),
         ("cat", "Gato"),
@@ -71,9 +65,6 @@ class Animal(models.Model):
     is_house_trained = models.BooleanField()
     is_special_needs = models.BooleanField()
     is_active = models.BooleanField(default=True)
-    image = models.ForeignKey(
-        ImageAnimal, on_delete=models.CASCADE, null=True, blank=True
-    )
 
     def __str__(self):
         return str(self.name)

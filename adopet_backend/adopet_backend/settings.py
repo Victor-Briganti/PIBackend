@@ -38,11 +38,17 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1",
 ]
 
+# Permite que cookies sejam enviados em requisições CORS
+CORS_ALLOW_CREDENTIALS = True
+
+# Django gera um token para proteger contra ataques CSRF.
+# Para que o token seja aceito em requisições CORS, é necessário
+# definir as "origins" que podem acessar a API
+# https://developer.mozilla.org/en-US/docs/Glossary/CSRF
+# https://docs.djangoproject.com/en/5.0/ref/settings/#csrf-trusted-origins
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
 ]
-
-CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -60,7 +66,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
+    "corsheaders.middleware.CorsMiddleware", # Middleware para CORS. Precisa na posição mais alta possível
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
