@@ -8,7 +8,13 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 
-from .models import TemperamentAnimal, Animal
+from .models import ImageAnimal, TemperamentAnimal, Animal
+
+
+class ImageAnimalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImageAnimal
+        fields = "__all__"
 
 
 class TemperamentAnimalSerializer(serializers.ModelSerializer):

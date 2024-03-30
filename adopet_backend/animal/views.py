@@ -10,6 +10,7 @@ from django.shortcuts import redirect, get_object_or_404
 from .models import Animal, ImageAnimal, TemperamentAnimal
 from .serializers import (
     AnimalSerializer,
+    ImageAnimalSerializer,
     TemperamentAnimalSerializer,
     ImageFilterbyAnimalSerializer,
 )
