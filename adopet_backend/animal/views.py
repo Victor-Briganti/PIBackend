@@ -1,18 +1,19 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework import status, permissions
+from rest_framework import status, permissions,viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from .models import Animal, TemperamentAnimal
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.shortcuts import redirect, get_object_or_404
+from .models import Animal, ImageAnimal, TemperamentAnimal
 from .serializers import (
     AnimalSerializer,
     TemperamentAnimalSerializer,
+    ImageFilterbyAnimalSerializer,
 )
 from .validation import validate_temperament
-
 # Create your views here.
 
 
@@ -238,3 +239,83 @@ class TemperamentAnimalDelete(APIView):
             "Não foi possível excluir o temperamento. Verifique se o mesmo é válido.",
             status=status.HTTP_404_NOT_FOUND,
         )
+
+class ImageAnimalCreateView(viewsets.ViewSet):
+    serializer_class = ImageAnimalSerializer
+
+    def create(self, request):
+        
+        data = request.data
+        animal_id = data["animal"]
+        animal = Animal.objects.get(pk=animal_id)
+        image = ImageAnimal.objects.create(animal=animal, image=data["image"])
+        image.save()
+        serializer = ImageAnimalSerializer(image)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class ImageAnimalListView(viewsets.ViewSet):
+    serializer_class = ImageAnimalSerializer
+
+    queryset = ImageAnimal.objects.all()
+    serializer_class = ImageAnimalSerializer
+
+    def list(self, request):
+        queryset = ImageAnimal.objects.all()
+        serializer = ImageAnimalSerializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data)
+
+class ImageAnimalDetailView(viewsets.ViewSet):
+    queryset = ImageAnimal.objects.all()
+    serializer_class = ImageAnimalSerializer
+
+    def retrieve(self, request, pk):
+        images = get_object_or_404(ImageAnimal, pk=pk)
+        serializer = ImageAnimalSerializer(images, context={'request': request})
+        return redirect(images.image.url)
+
+class ImageAnimalDeleteView(viewsets.ViewSet):
+    serializer_class = ImageAnimalSerializer
+
+    def retrieve(self, request, pk):
+        image = ImageAnimal.objects.get(pk=pk)
+        serializer = ImageAnimalSerializer(image, context={'request': request})
+        return Response(serializer.data)
+    
+    def delete(self, request, pk):
+        image = ImageAnimal.objects.get(pk=pk)
+        if image:
+            image.delete()
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+class ImageAnimalUpdateView(viewsets.ViewSet):
+    serializer_class = ImageAnimalSerializer
+
+    def retrieve(self, request, pk=None):
+        image = ImageAnimal.objects.get(pk=pk)
+        serializer = ImageAnimalSerializer(image, context={'request': request})
+        return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        data = request.data
+        try:
+            image = ImageAnimal.objects.get(pk=pk)
+        except ImageAnimal.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = ImageAnimalSerializer(image, data=data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            image = serializer.save()
+            if image:
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ImageAnimalFilterby(APIView):
+    serializer_class = ImageFilterbyAnimalSerializer
+
+    def get_queryset(self, pk):
+        return ImageAnimal.objects.filter(animal=pk)
+
+    def get(self, request, pk):
+        queryset = self.get_queryset(pk)
+        serializer = ImageFilterbyAnimalSerializer(queryset,many=True,context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)

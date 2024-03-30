@@ -23,3 +23,14 @@ class AnimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Animal
         fields = "__all__"
+
+
+class ImageFilterbyAnimalSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField('get_image_url')
+
+    class Meta:
+        model = ImageAnimal
+        fields = "__all__"
+
+    def get_image_url(self, obj):
+        return self.context['request'].build_absolute_uri(obj.image.url)

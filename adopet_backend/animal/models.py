@@ -75,3 +75,12 @@ class Animal(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+
+class ImageAnimal(models.Model):
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="image/", default="")
+    # is_default = models.BooleanField(default=False, validators=[validate_file_size])
+
+    def __str__(self):
+        return str(self.image)
