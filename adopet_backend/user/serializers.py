@@ -53,3 +53,14 @@ class UserSerializer(serializers.ModelSerializer):
         fields = "__all__"
         read_only_fields = ("email",)
         extra_kwargs = {"password": {"write_only": True, "min_length": 8}}
+
+    def update(self, instance, validated_data):
+        '''
+        Atualiza a senha do usuário no banco de dados de maneira criptografadas
+        '''
+        if 'password' in validated_data:
+            # Atualiza a senha com criptografia na instância e remove a mesma dos
+            # dados validados.
+            instance.set_password(validated_data.pop('password'))
+
+        return super().update(instance, validated_data)

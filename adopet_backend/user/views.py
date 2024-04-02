@@ -9,7 +9,8 @@ from rest_framework import status, permissions
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.core.exceptions import ValidationError
+from rest_framework.permissions import BasePermission
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from .models import User
 from .serializers import (
@@ -127,7 +128,15 @@ class UserUpdate(APIView):
 
     def put(self, request):
         data = request.data
-        user = User.objects.get(id=data["id"])
+
+        try:
+            user = User.objects.get(id=data["id"])
+        except ObjectDoesNotExist:
+            return Response({"error": "Usuário não encontrado"}, status.HTTP_404_NOT_FOUND)
+
+        if ( user.id != request.user.id ) and ( not request.user.is_superuser ):
+            return Response({"error": "Acesso Negado"}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = UserSerializer(user, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
