@@ -148,6 +148,21 @@ class AnimalUpdate(APIView):
                 return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class AnimalChoices(APIView):
+    """
+    Retorna as opções disponíveis para o animal.
+    """
+
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        choices = {
+            'specie_choices' : Animal.SPECIE_CHOICES,
+            'size_choices' : Animal.SIZE_CHOICES,
+            'gender_choices' : Animal.GENDER_CHOICES,
+        }
+        return Response(choices, status=status.HTTP_200_OK)
+
 
 class TemperamentAnimalList(APIView):
     """
