@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework import status, permissions,viewsets
+from rest_framework import status, permissions, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,6 +15,7 @@ from .serializers import (
     ImageFilterbyAnimalSerializer,
 )
 from .validation import validate_temperament
+
 # Create your views here.
 
 
@@ -241,63 +242,91 @@ class TemperamentAnimalDelete(APIView):
             status=status.HTTP_404_NOT_FOUND,
         )
 
-class ImageAnimalCreateView(viewsets.ViewSet):
+
+class ImageAnimalList(APIView):
+    """
+    Lista todas as imagens de animais disponíveis.
+    """
+
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        images = ImageAnimal.objects.all()
+        serializer = ImageAnimalSerializer(
+            images, many=True, context={"request": request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ImageAnimalDetail(APIView):
+    """
+    Retorna informações sobre a imagem especificada.
+    """
+
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, _, pk):
+        image = ImageAnimal.objects.get(pk=pk)
+        if image:
+            serializer = ImageAnimalSerializer(image)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response("Imagem não encontrada", status=status.HTTP_404_NOT_FOUND)
+
+
+class ImageAnimalFilterby(APIView):
+    """
+    Retorna todas as imagens de um animal específico.
+    """
+
+    serializer_class = ImageFilterbyAnimalSerializer
+
+    def get_queryset(self, pk):
+        return ImageAnimal.objects.filter(animal=pk)
+
+    def get(self, request, pk):
+        queryset = self.get_queryset(pk)
+        serializer = ImageFilterbyAnimalSerializer(
+            queryset, many=True, context={"request": request}
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ImageAnimalRegister(APIView):
+    """
+    Registra uma nova imagem para um animal.
+    """
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
     serializer_class = ImageAnimalSerializer
 
-    def create(self, request):
-        
+    def post(self, request):
         data = request.data
         animal_id = data["animal"]
         animal = Animal.objects.get(pk=animal_id)
-        image = ImageAnimal.objects.create(animal=animal, image=data["image"])
-        image.save()
-        serializer = ImageAnimalSerializer(image)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = ImageAnimalSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            image = serializer.save(animal=animal)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class ImageAnimalListView(viewsets.ViewSet):
-    serializer_class = ImageAnimalSerializer
 
-    queryset = ImageAnimal.objects.all()
-    serializer_class = ImageAnimalSerializer
+class ImageAnimalUpdate(APIView):
+    """
+    Atualiza a imagem de um animal.
+    """
 
-    def list(self, request):
-        queryset = ImageAnimal.objects.all()
-        serializer = ImageAnimalSerializer(queryset, many=True, context={'request': request})
-        return Response(serializer.data)
-
-class ImageAnimalDetailView(viewsets.ViewSet):
-    queryset = ImageAnimal.objects.all()
-    serializer_class = ImageAnimalSerializer
-
-    def retrieve(self, request, pk):
-        images = get_object_or_404(ImageAnimal, pk=pk)
-        serializer = ImageAnimalSerializer(images, context={'request': request})
-        return redirect(images.image.url)
-
-class ImageAnimalDeleteView(viewsets.ViewSet):
-    serializer_class = ImageAnimalSerializer
-
-    def retrieve(self, request, pk):
-        image = ImageAnimal.objects.get(pk=pk)
-        serializer = ImageAnimalSerializer(image, context={'request': request})
-        return Response(serializer.data)
-    
-    def delete(self, request, pk):
-        image = ImageAnimal.objects.get(pk=pk)
-        if image:
-            image.delete()
-            return Response(status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-class ImageAnimalUpdateView(viewsets.ViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
     serializer_class = ImageAnimalSerializer
 
     def retrieve(self, request, pk=None):
         image = ImageAnimal.objects.get(pk=pk)
-        serializer = ImageAnimalSerializer(image, context={'request': request})
+        serializer = ImageAnimalSerializer(image, context={"request": request})
         return Response(serializer.data)
 
-    def update(self, request, pk=None):
+    def put(self, request, pk=None):
         data = request.data
         try:
             image = ImageAnimal.objects.get(pk=pk)
@@ -310,13 +339,18 @@ class ImageAnimalUpdateView(viewsets.ViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class ImageAnimalFilterby(APIView):
-    serializer_class = ImageFilterbyAnimalSerializer
 
-    def get_queryset(self, pk):
-        return ImageAnimal.objects.filter(animal=pk)
+class ImageAnimalDelete(APIView):
+    """
+    Deleta uma imagem de animal.
+    """
 
-    def get(self, request, pk):
-        queryset = self.get_queryset(pk)
-        serializer = ImageFilterbyAnimalSerializer(queryset,many=True,context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def delete(self, _, pk):
+        image = ImageAnimal.objects.get(pk=pk)
+        if image:
+            image.delete()
+            return Response(status=status.HTTP_200_OK)
+        return Response("Imagem não encontrada", status=status.HTTP_404_NOT_FOUND)
