@@ -12,11 +12,15 @@ from rest_framework.response import Response
 from rest_framework.permissions import BasePermission
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
-from .models import User
+from .models import User, Adopter, Address
 from .serializers import (
     UserSerializer,
     UserLoginSerializer,
     UserRegisterSerializer,
+    AdopterSerializer,
+    AddressSerializer,
+    AdopterListSerializer
+
 )
 from .validation import (
     validate_user,
@@ -113,6 +117,13 @@ class UserDelete(APIView):
         user = User.objects.get(id=serializer.data["id"])
         user.is_active = False
         user.save()
+
+        # Desativa o adotante associado ao usuário
+        adopter = Adopter.objects.filter(user=user).first()
+        if adopter:
+            adopter.is_active = False
+            adopter.save()
+
         logout(request)
         return Response(user.is_active, status=status.HTTP_200_OK)
 
@@ -156,3 +167,99 @@ class UserDetail(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+class AdopterRegister(APIView):
+    """
+    Registra um adotante na aplicação.
+    """
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request):
+        adopter_serializer = AdopterSerializer(data=request.data.get('adopter', {}))
+        if adopter_serializer.is_valid(raise_exception=True):
+            user = request.user
+
+            # Check if the user already has an adopter account
+            if Adopter.objects.filter(user=user).exists():
+                error_msg = {"error": "User already has an adopter account."}
+                return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
+
+            # If user doesn't have an adopter account, proceed with registration
+            adopter = adopter_serializer.save(user=user)
+            return Response(adopter_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(adopter_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class AdopterList(APIView):
+    """
+    Lista todos os adotantes cadastrados. ## Apenas para testes
+    """
+    # permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes = (SessionAuthentication,)
+    def get(self, request):
+        adopters = Adopter.objects.all()
+        serializer = AdopterListSerializer(adopters, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class AdopterDetail(APIView):
+    """
+    Retorna o adotante autenticado atual.
+    """
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def get(self, request):
+        user = request.user
+        adopter = Adopter.objects.filter(user=user).first()  # Get adopter associated with the authenticated user
+        if not adopter:
+            return Response({"error": "Adopter not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = AdopterListSerializer(adopter)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class AdopterUpdate(APIView):
+    """
+    Atualiza as informações do adotante.
+    Espera que todas as informações do adotante sejam passadas, não somente o que se deseja atualizar.
+    """
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def put(self, request):
+        user = request.user
+        adopter = Adopter.objects.filter(user=user).first()  # Get adopter associated with the authenticated user
+        if not adopter:
+            return Response({"error": "Adopter not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        data = request.data
+        serializer = AdopterSerializer(adopter, data=data, partial=True)
+        if serializer.is_valid():
+            updated_adopter = serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+   
+class AdopterDelete(APIView):
+    """
+    Destroi o adotante do sistema. #apenas para testes
+    """
+    
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+    
+    def delete(self, request):
+        user = request.user
+        adopter = Adopter.objects.filter(user=user).first()  # Get adopter associated with the authenticated user
+        if not adopter:
+            return Response({"error": "Adopter not found."}, status=status.HTTP_404_NOT_FOUND)
+    
+        adopter.delete()
+        return Response(status=status.HTTP_200_OK)

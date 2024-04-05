@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import (
     MinValueValidator,
 )  # Verificador usado para limitar valores negativos
-
+from user.models import Adopter
 # Create your models here.
 
 
@@ -72,6 +72,7 @@ class Animal(models.Model):
     is_house_trained = models.BooleanField()
     is_special_needs = models.BooleanField()
     is_active = models.BooleanField(default=True)
+    is_adopted = models.ForeignKey(Adopter, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return str(self.name)

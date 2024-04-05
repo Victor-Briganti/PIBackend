@@ -15,7 +15,6 @@ from .serializers import (
     ImageFilterbyAnimalSerializer,
 )
 from .validation import validate_temperament
-
 # Create your views here.
 
 
