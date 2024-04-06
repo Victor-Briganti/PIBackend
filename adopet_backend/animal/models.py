@@ -57,7 +57,7 @@ class Animal(models.Model):
     name = models.CharField(max_length=100)
     age = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(0)])
     specie = models.CharField(max_length=100, choices=SPECIE_CHOICES)
-    genre = models.CharField(max_length=100, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=100, choices=GENDER_CHOICES)
     size = models.CharField(
         max_length=100,
         choices=SIZE_CHOICES,
