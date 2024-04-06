@@ -15,6 +15,7 @@ urlpatterns = [
     path("register/", views.AnimalRegister.as_view(), name="animal_register"),
     path("delete/<int:pk>", views.AnimalDelete.as_view(), name="animal_delete"),
     path("update/<int:pk>", views.AnimalUpdate.as_view(), name="animal_update"),
+    path("choices/", views.AnimalChoices.as_view(), name="animal_choices"),
     # Endpoints para o temperamento do animal.
     path(
         "temperament/", views.TemperamentAnimalList.as_view(), name="temperament_list"
