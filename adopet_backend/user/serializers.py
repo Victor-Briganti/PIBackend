@@ -71,16 +71,17 @@ class AdopterSerializer(serializers.ModelSerializer):
     
 
     def update(self, instance, validated_data):
-        address_data = validated_data.pop("address")
-        address = instance.address
-        address.zip_code = address_data.get("zip_code", address.zip_code)
-        address.street = address_data.get("street", address.street)
-        address.number = address_data.get("number", address.number)
-        address.complement = address_data.get("complement", address.complement)
-        address.city = address_data.get("city", address.city)
-        address.state = address_data.get("state", address.state)
-        address.district = address_data.get("district", address.district)
-        address.save()
+        address_data = validated_data.pop("address", None)
+        if address_data:
+            address = instance.address
+            address.zip_code = address_data.get("zip_code", address.zip_code)
+            address.street = address_data.get("street", address.street)
+            address.number = address_data.get("number", address.number)
+            address.complement = address_data.get("complement", address.complement)
+            address.city = address_data.get("city", address.city)
+            address.state = address_data.get("state", address.state)
+            address.district = address_data.get("district", address.district)
+            address.save()
         instance.cpf = validated_data.get("cpf", instance.cpf)
         instance.phone = validated_data.get("phone", instance.phone)
         instance.birth_date = validated_data.get("birth_date", instance.birth_date)

@@ -227,7 +227,6 @@ class AdopterDetail(APIView):
 class AdopterUpdate(APIView):
     """
     Atualiza as informações do adotante.
-    Espera que todas as informações do adotante sejam passadas, não somente o que se deseja atualizar.
     """
 
     permission_classes = (permissions.IsAuthenticated,)

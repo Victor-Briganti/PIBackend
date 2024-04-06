@@ -85,3 +85,52 @@ Caso houver conflito me procure(João).
 Credenciais para acessar o "/admin" são as seguintes:
 - usuário: adm_adopet
 - senha: django8
+
+
+## json
+
+json modelo para criar um adotante:
+
+{
+    "adopter": {
+        "birth_date": "1988-09-02",
+        "phone": "14991679851",
+        "cpf": "77777777777",
+        "address": {
+            "street": "lampkin lane",
+            "city": "south pasadena",
+            "state": "AL",
+            "zip_code": "18639750",
+            "number": "1245",
+            "district": "haddonfield"
+        }
+    }
+}
+
+json modelo para atualizar um adotante: (pode receber informações em partes desde que siga o modelo json abaixo)
+
+{
+    "cpf": "33333333333",
+    "phone": "987654323",
+    "birth_date": "1991-06-13",
+    "address": {
+        "zip_code": "222224",
+        "street": "New boston",
+        "number": "19",
+        "complement": "",
+        "city": "New city",
+        "state": "RJ",
+        "district": "New center"
+    }
+}
+
+
+json modelo para criar usuario:
+
+{
+"firstname": "krillin",
+"lastname": "catolico",
+"email": "krillin@catolico.com",
+"password": "senhagrande"
+}
+
