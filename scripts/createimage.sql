@@ -7,4 +7,5 @@ INSERT INTO public.animal_imageanimal (image,animal_id) VALUES
 	 ('image/image7.jpeg',7),
 	 ('image/image8.jpg',8),
 	 ('image/image9.jpg',9),
-	 ('image/image1.jpg',1);
+	 ('image/image1.jpg',1),
+	 ('image/image10.webp',10);

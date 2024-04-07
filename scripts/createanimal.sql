@@ -7,4 +7,5 @@ INSERT INTO public.animal_animal (name,age,coat,weight,"size",specie,adoption_da
 	 ('Messi',12,'Curto',35.0,'small','cat',NULL,'(Qual seu estado antes da luta?) - Meu estado é a Paraíba',true,false,true,'F',NULL),
 	 ('Antetiguemon',3,'Curto',57.0,'small','dog',NULL,'Minha mãe uma Senhora que já nasceu analfabeta',true,false,true,'M',NULL),
 	 ('Dino',5,'Curto',16.0,'small','dog',NULL,'Aguento mas não garanto',true,false,true,'M',NULL),
-	 ('Bento',12,'Curto',15.0,'small','dog',NULL,'Por Deus tenham um blog',true,false,true,'M',NULL);
+	 ('Bento',12,'Curto',15.0,'small','dog',NULL,'Por Deus tenham um blog',true,false,true,'M',NULL),
+	 ('Niko',12,'Curto',15.0,'small','dog',NULL,'Eu fico d%$¨$%$ da minha cabeça',true,false,true,'M',NULL);
