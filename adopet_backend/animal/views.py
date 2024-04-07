@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import status, permissions, viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -25,9 +26,17 @@ class AnimalList(APIView):
     """
 
     permission_classes = (permissions.AllowAny,)
+    pagination_class = PageNumberPagination()
 
     def get(self, request):
         animals = Animal.objects.filter(is_active=True)
+
+        # Apply pagination
+        page = self.pagination_class.paginate_queryset(animals, request)
+        if page is not None:
+            serializer = AnimalSerializer(page, many=True)
+            return self.pagination_class.get_paginated_response(serializer.data)
+
         serializer = AnimalSerializer(animals, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
