@@ -1,6 +1,7 @@
 # Adopet ONG (Projeto Integrador)
 
 ## Tecnologias
+
 <p align="center">
     <img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white"/>
     <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white"/>
@@ -10,7 +11,7 @@
 
 - João Victor Briganti de Oliveira
 - Pedro Conrado Negreiro da Silva
-- Augusto Maccagnan Mendes 
+- Augusto Maccagnan Mendes
 - Matheus Floriano Saito da Silva
 
 ## Sobre
@@ -41,19 +42,24 @@ sudo apt install postgresql postgresql-contrib
 ```
 
 **Configuração:**
-```bash 
+
+```bash
 sudo -i -u postgres psql < scripts/createdb.sql
+sudo -i -u postgres psql < scripts/createanimal.sql
+sudo -i -u postgres psql < scripts/createusers.sql
 ```
 
 ## Contribuindo
 
 ### Migrate
-O django faz boa parte da administração do banco de dados, por esse motivo sempre antes de dar um novo commit, certifique-se de executar os seguintes passos: 
+
+O django faz boa parte da administração do banco de dados, por esse motivo sempre antes de dar um novo commit, certifique-se de executar os seguintes passos:
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
+
 ### Mensagens de Commit
 
 Por padrão as mensagens de commit devem seguir o seguinte padrão:
@@ -63,74 +69,158 @@ Por padrão as mensagens de commit devem seguir o seguinte padrão:
 Breve descrição(Não passar de 3 linhas).
 
 ### Commit
+
 Utilize uma branch com o seu nome para realizar as modificações no programa. **NÃO** suba essa branch para o github, ela deve ser de uso local.
 
 **PASSOS:**
+
 1. git switch main
 2. git pull
-3. git merge __seu nome__
+3. git merge **seu nome**
 4. git push
 
 ### Pulling
+
 Ao realizar um git pull, se houve modificações se torna necessário atualizar a branch com seu nome também. Para isso siga os seguintes passos:
 
-1. git switch __seu nome__
+1. git switch **seu nome**
 2. git merge main
 
 Caso houver conflito me procure(João).
 
 ## Django admin
+
 **IMPORTANTE:** Use o comando `python manage.py createsuperuser` para criar um usuário administrador com as credendicias abaixo.
 
 Credenciais para acessar o "/admin" são as seguintes:
+
 - usuário: adm_adopet
 - senha: django8
 
+## Modelos JSON
 
-## json
+### Animal
 
-json modelo para criar um adotante:
-
+```json
 {
-    "adopter": {
-        "birth_date": "1988-09-02",
-        "phone": "14991679851",
-        "cpf": "77777777777",
-        "address": {
-            "street": "lampkin lane",
-            "city": "south pasadena",
-            "state": "AL",
-            "zip_code": "18639750",
-            "number": "1245",
-            "district": "haddonfield"
-        }
-    }
+  "id": 1,
+  "temperament": [],
+  "name": "Ze",
+  "age": 12,
+  "specie": "dog",
+  "gender": "M",
+  "size": "small",
+  "coat": "Curto",
+  "weight": 15.0,
+  "adoption_date": null,
+  "description": "Grande Ze",
+  "is_house_trained": true,
+  "is_special_needs": false,
+  "is_active": true,
+  "is_adopted": null
 }
+```
 
-json modelo para atualizar um adotante: (pode receber informações em partes desde que siga o modelo json abaixo)
+### Adotante
 
+```json
 {
-    "cpf": "33333333333",
-    "phone": "987654323",
-    "birth_date": "1991-06-13",
+  "adopter": {
+    "birth_date": "1988-09-02",
+    "phone": "14991679851",
+    "cpf": "77777777777",
     "address": {
-        "zip_code": "222224",
-        "street": "New boston",
-        "number": "19",
-        "complement": "",
-        "city": "New city",
-        "state": "RJ",
-        "district": "New center"
+      "street": "lampkin lane",
+      "city": "south pasadena",
+      "state": "AL",
+      "zip_code": "18639750",
+      "number": "1245",
+      "district": "haddonfield"
     }
+  }
 }
+```
 
+**Modelo para atualização:**
+OBS.: Pode receber informações em partes desde que siga o modelo json abaixo
 
-json modelo para criar usuario:
-
+```json
 {
-"firstname": "krillin",
-"lastname": "catolico",
-"email": "krillin@catolico.com",
-"password": "senhagrande"
+  "cpf": "33333333333",
+  "phone": "987654323",
+  "birth_date": "1991-06-13",
+  "address": {
+    "zip_code": "222224",
+    "street": "New boston",
+    "number": "19",
+    "complement": "",
+    "city": "New city",
+    "state": "RJ",
+    "district": "New center"
+  }
 }
+```
 
+### Usuário
+
+Campos como `last_login`, `is_active` e `is_staff` não devem ser preenchidos. Estes campos devem ser atualizados pela própria implementação do Django.
+
+```json
+{
+  "id": 5,
+  "adopter": null,
+  "last_login": "2024-04-07T01:43:09.474485Z",
+  "is_superuser": true,
+  "email": "admin@gmail.com",
+  "firstname": "Admin",
+  "lastname": "Teste",
+  "is_active": true,
+  "is_staff": true,
+  "groups": [],
+  "user_permissions": []
+}
+```
+
+**Modelo de Criação/Atualização:**
+
+```json
+{
+  "firstname": "krillin",
+  "lastname": "catolico",
+  "email": "krillin@catolico.com",
+  "password": "senhagrande"
+}
+```
+
+### Animal
+
+Nem todos os campos são necessários durante a criação do animal. São eles:
+- `id` (Este não deve ser passado em hipotese alguma)
+- `temperament`
+- `adoption_date`
+- `is_house_trained`
+- `is_special_needs`
+- `is_adopted`
+
+
+OBS.: Pode receber informações em partes desde que siga o modelo json abaixo
+
+```json
+{
+  "id": 1,
+  "temperament": [],
+  "name": "Ze",
+  "age": 12,
+  "specie": "dog",
+  "gender": "M",
+  "size": "small",
+  "coat": "Curto",
+  "weight": 15.0,
+  "adoption_date": null,
+  "description": "Grande Ze",
+  "is_house_trained": true,
+  "is_special_needs": false,
+  "is_active": true,
+  "is_adopted": null
+}
+```
