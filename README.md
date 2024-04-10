@@ -44,9 +44,9 @@ sudo apt install postgresql postgresql-contrib
 **Configuração:**
 
 ```bash
-sudo -i -u postgres psql < scripts/createdb.sql
-sudo -i -u postgres psql < scripts/createanimal.sql
-sudo -i -u postgres psql < scripts/createusers.sql
+sudo -i -u postgres psql adopetbd < scripts/createdb.sql
+sudo -i -u postgres psql adopetbd < scripts/createanimal.sql
+sudo -i -u postgres psql adopetbd < scripts/createusers.sql
 ```
 
 ## Contribuindo
