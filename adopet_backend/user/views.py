@@ -186,7 +186,7 @@ class AdopterRegister(APIView):
 
             # Check if the user already has an adopter account
             if Adopter.objects.filter(user=user).exists():
-                error_msg = {"error": "User already has an adopter account."}
+                error_msg = {"error": "Este usuário ja possui um adotante vinculado."}
                 return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
 
             # If user doesn't have an adopter account, proceed with registration
@@ -219,7 +219,7 @@ class AdopterDetail(APIView):
         user = request.user
         adopter = Adopter.objects.filter(user=user).first()  # Get adopter associated with the authenticated user
         if not adopter:
-            return Response({"error": "Adopter not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Adotante não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = AdopterListSerializer(adopter)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -236,7 +236,7 @@ class AdopterUpdate(APIView):
         user = request.user
         adopter = Adopter.objects.filter(user=user).first()  # Get adopter associated with the authenticated user
         if not adopter:
-            return Response({"error": "Adopter not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Adotante não encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
         data = request.data
         serializer = AdopterSerializer(adopter, data=data, partial=True)
@@ -258,7 +258,7 @@ class AdopterDelete(APIView):
         user = request.user
         adopter = Adopter.objects.filter(user=user).first()  # Get adopter associated with the authenticated user
         if not adopter:
-            return Response({"error": "Adopter not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Adotante não encontrado."}, status=status.HTTP_404_NOT_FOUND)
     
         adopter.delete()
         return Response(status=status.HTTP_200_OK)
