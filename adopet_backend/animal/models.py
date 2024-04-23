@@ -37,6 +37,11 @@ class Animal(models.Model):
     """
     Representa um animal que pode ser adotado.
     """
+    COAT_CHOICES = [
+        ("short", "Curto"),
+        ("medium", "Médio"),
+        ("long", "Longo"),
+    ]
 
     SPECIE_CHOICES = [
         ("dog", "Cachorro"),
@@ -55,7 +60,7 @@ class Animal(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    age = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(0)])
+    age = models.IntegerField(validators=[MinValueValidator(0)])
     specie = models.CharField(max_length=100, choices=SPECIE_CHOICES)
     gender = models.CharField(max_length=100, choices=GENDER_CHOICES)
     size = models.CharField(
@@ -65,10 +70,11 @@ class Animal(models.Model):
         blank=True,
     )
     temperament = models.ManyToManyField(TemperamentAnimal, blank=True)
-    coat = models.CharField(max_length=100)
+    coat = models.CharField(max_length=100, null=True, blank=True, choices=COAT_CHOICES)
     weight = models.FloatField(null=True, blank=True, validators=[MinValueValidator(0)])
     adoption_date = models.DateTimeField(null=True, blank=True)
-    description = models.TextField()
+    register_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     is_house_trained = models.BooleanField()
     is_special_needs = models.BooleanField()
     is_active = models.BooleanField(default=True)
@@ -81,7 +87,6 @@ class Animal(models.Model):
 class ImageAnimal(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="image/", default="")
-    # is_default = models.BooleanField(default=False, validators=[validate_file_size])
 
     def __str__(self):
         return str(self.image)
