@@ -1,8 +1,5 @@
-from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
+from django.urls import path
 from rest_framework import routers
-
 
 from . import views
 
@@ -16,39 +13,15 @@ urlpatterns = [
     path("delete/<int:pk>", views.AnimalDelete.as_view(), name="animal_delete"),
     path("update/<int:pk>", views.AnimalUpdate.as_view(), name="animal_update"),
     path("choices/", views.AnimalChoices.as_view(), name="animal_choices"),
-    # Endpoints para o temperamento do animal.
-    path(
-        "temperament/", views.TemperamentAnimalList.as_view(), name="temperament_list"
-    ),
-    path(
-        "temperament/<int:pk>",
-        views.TemperamentAnimalDetail.as_view(),
-        name="temperament_detail",
-    ),
-    path(
-        "temperament/register/",
-        views.TemperamentAnimalRegister.as_view(),
-        name="temperament_register",
-    ),
-    path(
-        "temperament/delete/<int:pk>",
-        views.TemperamentAnimalDelete.as_view(),
-        name="temperament_delete",
-    ),
-    path(
-        "temperament/update/<int:pk>",
-        views.TemperamentAnimalUpdate.as_view(),
-        name="temperament_update",
-    ),
     # Endpoints para as imagens
     path("images/", views.ImageAnimalList.as_view(), name="imageanimal_list"),
     path(
         "images/<int:pk>", views.ImageAnimalDetail.as_view(), name="imageanimal_detail"
     ),
     path(
-        "images/register/",
-        views.ImageAnimalRegister.as_view(),
-        name="imageanimal_register",
+        "images/upload/",
+        views.ImageAnimalUpload.as_view(),
+        name="imageanimal_upload",
     ),
     path(
         "images/delete/<int:pk>",

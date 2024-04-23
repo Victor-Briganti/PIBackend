@@ -7,7 +7,7 @@
 
 from rest_framework import serializers
 
-from .models import ImageAnimal, TemperamentAnimal, Animal
+from .models import ImageAnimal, Animal
 
 
 class ImageAnimalSerializer(serializers.ModelSerializer):
@@ -16,15 +16,7 @@ class ImageAnimalSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TemperamentAnimalSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TemperamentAnimal
-        fields = "__all__"
-
-
 class AnimalSerializer(serializers.ModelSerializer):
-    temperament = TemperamentAnimalSerializer(many=True, read_only=True)
-
     class Meta:
         model = Animal
         fields = "__all__"

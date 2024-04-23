@@ -9,10 +9,9 @@ from rest_framework import status, permissions
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import BasePermission
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
-from .models import User, Adopter, Address
+from .models import User, Adopter
 from .serializers import (
     UserSerializer,
     UserLoginSerializer,
@@ -191,7 +190,7 @@ class AdopterRegister(APIView):
                 return Response(error_msg, status=status.HTTP_400_BAD_REQUEST)
 
             # If user doesn't have an adopter account, proceed with registration
-            adopter = adopter_serializer.save(user=user)
+            adopter_serializer.save(user=user)
             return Response(adopter_serializer.data, status=status.HTTP_201_CREATED)
         return Response(adopter_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -203,7 +202,7 @@ class AdopterList(APIView):
 
     # permission_classes = (permissions.IsAuthenticated,)
     # authentication_classes = (SessionAuthentication,)
-    def get(self, request):
+    def get(self, _):
         adopters = Adopter.objects.all()
         serializer = AdopterListSerializer(adopters, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -248,7 +247,7 @@ class AdopterUpdate(APIView):
         data = request.data
         serializer = AdopterSerializer(adopter, data=data, partial=True)
         if serializer.is_valid():
-            updated_adopter = serializer.save()
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

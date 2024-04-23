@@ -1,37 +1,12 @@
 from django.db import models
-from django.core.exceptions import ValidationError
+
+# Verificador usado para limitar valores negativos
 from django.core.validators import (
     MinValueValidator,
-)  # Verificador usado para limitar valores negativos
+)
 from user.models import Adopter
 
 # Create your models here.
-
-
-class TemperamentAnimal(models.Model):
-    """
-    Representa o tipo de temperamento que um animal pode ter.
-    Alguns temperamentos não devem ser usados juntos, para isso defina-os em
-    "validation.py".
-    """
-
-    TEMPERAMENT_CHOICES = [
-        ("affectionate", "Dengoso"),
-        ("aggressive", "Agressivo"),
-        ("calm", "Calmo"),
-        ("energetic", "Energético"),
-        ("friendly", "Amigável"),
-        ("playful", "Brincalhão"),
-        ("shy", "Arrisco"),
-        ("sociable", "Sociável"),
-        ("territorial", "Territorial"),
-    ]
-
-    # "choices" é o campo usado para definir os tipos que são permitidos para o campo.
-    name = models.CharField(max_length=100, unique=True, choices=TEMPERAMENT_CHOICES)
-
-    def __str__(self):
-        return str(self.name)
 
 
 class Animal(models.Model):
@@ -77,7 +52,7 @@ class Animal(models.Model):
         null=True,
         blank=True,
     )
-    temperament = models.ManyToManyField(TemperamentAnimal, blank=True)
+    temperament = models.CharField(null=True, blank=True)
     coat = models.CharField(null=True, blank=True, choices=COAT_CHOICES)
     weight = models.FloatField(null=True, blank=True, validators=[MinValueValidator(0)])
     adoption_date = models.DateTimeField(null=True, blank=True)
@@ -86,6 +61,8 @@ class Animal(models.Model):
     is_house_trained = models.BooleanField()
     is_special_needs = models.BooleanField()
     is_active = models.BooleanField(default=True)
+    is_vaccinated = models.BooleanField()
+    is_castrated = models.BooleanField()
     is_adopted = models.ForeignKey(
         Adopter, on_delete=models.CASCADE, null=True, blank=True
     )
