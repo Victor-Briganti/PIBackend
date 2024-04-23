@@ -6,7 +6,6 @@
 """
 
 from rest_framework import serializers
-from django.contrib.auth import get_user_model, authenticate
 
 from .models import ImageAnimal, TemperamentAnimal, Animal
 
@@ -32,11 +31,11 @@ class AnimalSerializer(serializers.ModelSerializer):
 
 
 class ImageFilterbyAnimalSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField('get_image_url')
+    image = serializers.SerializerMethodField("get_image_url")
 
     class Meta:
         model = ImageAnimal
         fields = "__all__"
 
     def get_image_url(self, obj):
-        return self.context['request'].build_absolute_uri(obj.image.url)
+        return self.context["request"].build_absolute_uri(obj.image.url)

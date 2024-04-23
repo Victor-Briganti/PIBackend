@@ -75,6 +75,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return str(self.email)
 
+
 class Address(models.Model):
     """
     Modelo de endereço.
@@ -116,10 +117,11 @@ class Address(models.Model):
     complement = models.CharField(max_length=100, blank=True)
     district = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
-    state = models.CharField(choices=STATE_CHOICES,max_length=2)
+    state = models.CharField(choices=STATE_CHOICES, max_length=2)
 
     def __str__(self):
         return str(self.zip_code)
+
 
 class Adopter(models.Model):
     """
@@ -132,7 +134,6 @@ class Adopter(models.Model):
     phone = models.CharField(max_length=15)
     cpf = models.CharField(max_length=11)
     is_active = models.BooleanField(default=True)
-    
 
     def __str__(self):
         return str(self.cpf)

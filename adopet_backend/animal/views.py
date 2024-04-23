@@ -16,6 +16,7 @@ from .serializers import (
     ImageFilterbyAnimalSerializer,
 )
 from .validation import validate_temperament
+
 # Create your views here.
 
 
@@ -31,7 +32,7 @@ class AnimalList(APIView):
     def get(self, request):
         animals = Animal.objects.filter(is_active=True)
 
-        # Apply pagination
+        # Adiciona paginação na requisição(se necessário)
         page = self.pagination_class.paginate_queryset(animals, request)
         if page is not None:
             serializer = AnimalSerializer(page, many=True)
@@ -156,6 +157,7 @@ class AnimalUpdate(APIView):
                 return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class AnimalChoices(APIView):
     """
     Retorna as opções disponíveis para o animal.
@@ -165,9 +167,9 @@ class AnimalChoices(APIView):
 
     def get(self, request):
         choices = {
-            'specie_choices' : Animal.SPECIE_CHOICES,
-            'size_choices' : Animal.SIZE_CHOICES,
-            'gender_choices' : Animal.GENDER_CHOICES,
+            "specie_choices": Animal.SPECIE_CHOICES,
+            "size_choices": Animal.SIZE_CHOICES,
+            "gender_choices": Animal.GENDER_CHOICES,
         }
         return Response(choices, status=status.HTTP_200_OK)
 

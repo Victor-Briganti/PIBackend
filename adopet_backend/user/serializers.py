@@ -51,26 +51,34 @@ class UserLoginSerializer(serializers.Serializer):
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address
-        fields = ["zip_code", "street", "number", "complement", "city", "state", "district"]
-        # read_only_fields = ("",)
+        fields = [
+            "zip_code",
+            "street",
+            "number",
+            "complement",
+            "city",
+            "state",
+            "district",
+        ]
 
 
 class AdopterSerializer(serializers.ModelSerializer):
     address = AddressSerializer()
+
     class Meta:
         model = Adopter
         fields = ["cpf", "phone", "birth_date", "address"]
         read_only_fields = ["user"]
 
     def create(self, validated_data):
+        # Cria um adotante e um endereço associado.
         address_data = validated_data.pop("address")
         address = Address.objects.create(**address_data)
         adopter = Adopter.objects.create(address=address, **validated_data)
         return adopter
 
-    
-
     def update(self, instance, validated_data):
+        # Se existir um endereço associado ao adotante, atualiza o mesmo.
         address_data = validated_data.pop("address", None)
         if address_data:
             address = instance.address
@@ -92,7 +100,8 @@ class AdopterSerializer(serializers.ModelSerializer):
         instance.address.delete()
         instance.delete()
         return instance
-    
+
+
 class UserSerializer(serializers.ModelSerializer):
     adopter = AdopterSerializer(required=False)
 
@@ -103,29 +112,42 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True, "min_length": 8}}
 
     def update(self, instance, validated_data):
-        '''
-        Atualiza a senha do usuário no banco de dados de maneira criptografadas
-        '''
-        if 'password' in validated_data:
+        if "password" in validated_data:
             # Atualiza a senha com criptografia na instância e remove a mesma dos
             # dados validados.
-            instance.set_password(validated_data.pop('password'))
+            instance.set_password(validated_data.pop("password"))
 
         return super().update(instance, validated_data)
 
-class AdopterListSerializer(serializers.ModelSerializer):
-    address_id = serializers.IntegerField(source='address.id', read_only=True)
-    street = serializers.CharField(source='address.street', read_only=True)
-    city = serializers.CharField(source='address.city', read_only=True)
-    state = serializers.CharField(source='address.state', read_only=True)
-    zip_code = serializers.CharField(source='address.zip_code', read_only=True)
-    number = serializers.CharField(source='address.number', read_only=True)
-    complement = serializers.CharField(source='address.complement', read_only=True)
-    district = serializers.CharField(source='address.district', read_only=True)
-    user_id = serializers.IntegerField(source='user.id', read_only=True)
 
+class AdopterListSerializer(serializers.ModelSerializer):
+    # Definido campos de endereço associados ao adotante.
+    address_id = serializers.IntegerField(source="address.id", read_only=True)
+    street = serializers.CharField(source="address.street", read_only=True)
+    city = serializers.CharField(source="address.city", read_only=True)
+    state = serializers.CharField(source="address.state", read_only=True)
+    zip_code = serializers.CharField(source="address.zip_code", read_only=True)
+    number = serializers.CharField(source="address.number", read_only=True)
+    complement = serializers.CharField(source="address.complement", read_only=True)
+    district = serializers.CharField(source="address.district", read_only=True)
+    user_id = serializers.IntegerField(source="user.id", read_only=True)
 
     class Meta:
         model = Adopter
-        fields = ['id', 'birth_date', 'phone', 'cpf','user_id', 'address_id' , 'street', 'city', 'state', 'zip_code', 'number', 'complement', 'district','is_active']
-        read_only_fields = ['id']
+        fields = [
+            "id",
+            "birth_date",
+            "phone",
+            "cpf",
+            "user_id",
+            "address_id",
+            "street",
+            "city",
+            "state",
+            "zip_code",
+            "number",
+            "complement",
+            "district",
+            "is_active",
+        ]
+        read_only_fields = ["id"]
