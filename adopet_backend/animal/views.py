@@ -1,13 +1,11 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework import status, permissions, viewsets
+from rest_framework import status, permissions
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.parsers import MultiPartParser, FormParser
-from django.shortcuts import redirect, get_object_or_404
 from .models import Animal, ImageAnimal, TemperamentAnimal
 from .serializers import (
     AnimalSerializer,
@@ -167,9 +165,11 @@ class AnimalChoices(APIView):
 
     def get(self, request):
         choices = {
+            "age_choices": Animal.AGE_CHOICES,
+            "coat_choices": Animal.COAT_CHOICES,
+            "gender_choices": Animal.GENDER_CHOICES,
             "specie_choices": Animal.SPECIE_CHOICES,
             "size_choices": Animal.SIZE_CHOICES,
-            "gender_choices": Animal.GENDER_CHOICES,
         }
         return Response(choices, status=status.HTTP_200_OK)
 

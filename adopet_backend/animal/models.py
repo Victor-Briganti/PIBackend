@@ -4,6 +4,7 @@ from django.core.validators import (
     MinValueValidator,
 )  # Verificador usado para limitar valores negativos
 from user.models import Adopter
+
 # Create your models here.
 
 
@@ -37,10 +38,22 @@ class Animal(models.Model):
     """
     Representa um animal que pode ser adotado.
     """
+
+    AGE_CHOICES = [
+        ("puppy", "Filhote"),
+        ("adult", "Adulto"),
+        ("old", "Idoso"),
+    ]
+
     COAT_CHOICES = [
         ("short", "Curto"),
         ("medium", "Médio"),
         ("long", "Longo"),
+    ]
+
+    GENDER_CHOICES = [
+        ("M", "Macho"),
+        ("F", "Fêmea"),
     ]
 
     SPECIE_CHOICES = [
@@ -54,15 +67,10 @@ class Animal(models.Model):
         ("large", "Grande porte"),
     ]
 
-    GENDER_CHOICES = [
-        ("M", "Macho"),
-        ("F", "Fêmea"),
-    ]
-
     name = models.CharField(max_length=100)
-    age = models.IntegerField(validators=[MinValueValidator(0)])
-    specie = models.CharField(max_length=100, choices=SPECIE_CHOICES)
-    gender = models.CharField(max_length=100, choices=GENDER_CHOICES)
+    age = models.CharField(choices=AGE_CHOICES)
+    specie = models.CharField(choices=SPECIE_CHOICES)
+    gender = models.CharField(choices=GENDER_CHOICES)
     size = models.CharField(
         max_length=100,
         choices=SIZE_CHOICES,
@@ -70,7 +78,7 @@ class Animal(models.Model):
         blank=True,
     )
     temperament = models.ManyToManyField(TemperamentAnimal, blank=True)
-    coat = models.CharField(max_length=100, null=True, blank=True, choices=COAT_CHOICES)
+    coat = models.CharField(null=True, blank=True, choices=COAT_CHOICES)
     weight = models.FloatField(null=True, blank=True, validators=[MinValueValidator(0)])
     adoption_date = models.DateTimeField(null=True, blank=True)
     register_date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
@@ -78,7 +86,9 @@ class Animal(models.Model):
     is_house_trained = models.BooleanField()
     is_special_needs = models.BooleanField()
     is_active = models.BooleanField(default=True)
-    is_adopted = models.ForeignKey(Adopter, on_delete=models.CASCADE, null=True, blank=True)
+    is_adopted = models.ForeignKey(
+        Adopter, on_delete=models.CASCADE, null=True, blank=True
+    )
 
     def __str__(self):
         return str(self.name)

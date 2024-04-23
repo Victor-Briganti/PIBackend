@@ -44,9 +44,24 @@ sudo apt install postgresql postgresql-contrib
 **Configuração:**
 
 ```bash
+# DELETA o banco de dados
+sudo -i -u postgres psql < scripts/deletedb.sql
+
+# Cria o banco de dados
 sudo -i -u postgres psql < scripts/createdb.sql
+
+#############################################################
+#### MIGRATE PRECISA SER FEITO ANTES DOS COMANDOS ABAIXO ####
+#############################################################
+
+# Adiciona os animais ao banco de dados
 sudo -i -u postgres psql adopetbd < scripts/createanimal.sql
+
+# Adiciona os usuários ao banco de dados
 sudo -i -u postgres psql adopetbd < scripts/createusers.sql
+
+# Adiciona os imagens ao banco de dados
+sudo -i -u postgres psql adopetbd < scripts/createimage.sql
 ```
 
 ## Contribuindo
@@ -195,13 +210,13 @@ Campos como `last_login`, `is_active` e `is_staff` não devem ser preenchidos. E
 ### Animal
 
 Nem todos os campos são necessários durante a criação do animal. São eles:
+
 - `id` (Este não deve ser passado em hipotese alguma)
 - `temperament`
 - `adoption_date`
 - `is_house_trained`
 - `is_special_needs`
 - `is_adopted`
-
 
 OBS.: Pode receber informações em partes desde que siga o modelo json abaixo
 

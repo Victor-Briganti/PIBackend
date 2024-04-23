@@ -18,9 +18,7 @@ from .serializers import (
     UserLoginSerializer,
     UserRegisterSerializer,
     AdopterSerializer,
-    AddressSerializer,
-    AdopterListSerializer
-
+    AdopterListSerializer,
 )
 from .validation import (
     validate_user,
@@ -44,7 +42,7 @@ class UserRegister(APIView):
         try:
             data = validate_user(request.data)
         except ValidationError as err:
-            return Response(err, status=status.HTTP_400_BAD_REQUEST) 
+            return Response(err, status=status.HTTP_400_BAD_REQUEST)
         serializer = UserRegisterSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
@@ -131,7 +129,8 @@ class UserDelete(APIView):
 class UserUpdate(APIView):
     """
     Atualiza as informações do usuário.
-    Espera que todas as informações do usuário sejam passadas, não somente o que se deseja atualizar.
+    Espera que todas as informações do usuário sejam
+    passadas, não somente o que se deseja atualizar.
     """
 
     permission_classes = (permissions.IsAuthenticated,)
@@ -143,10 +142,14 @@ class UserUpdate(APIView):
         try:
             user = User.objects.get(id=data["id"])
         except ObjectDoesNotExist:
-            return Response({"error": "Usuário não encontrado"}, status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Usuário não encontrado"}, status.HTTP_404_NOT_FOUND
+            )
 
-        if ( user.id != request.user.id ) and ( not request.user.is_superuser ):
-            return Response({"error": "Acesso Negado"}, status=status.HTTP_403_FORBIDDEN)
+        if (user.id != request.user.id) and (not request.user.is_superuser):
+            return Response(
+                {"error": "Acesso Negado"}, status=status.HTTP_403_FORBIDDEN
+            )
 
         serializer = UserSerializer(user, data=data, partial=True)
         if serializer.is_valid(raise_exception=True):
@@ -169,8 +172,6 @@ class UserDetail(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
-
 class AdopterRegister(APIView):
     """
     Registra um adotante na aplicação.
@@ -180,7 +181,7 @@ class AdopterRegister(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
-        adopter_serializer = AdopterSerializer(data=request.data.get('adopter', {}))
+        adopter_serializer = AdopterSerializer(data=request.data.get("adopter", {}))
         if adopter_serializer.is_valid(raise_exception=True):
             user = request.user
 
@@ -193,19 +194,20 @@ class AdopterRegister(APIView):
             adopter = adopter_serializer.save(user=user)
             return Response(adopter_serializer.data, status=status.HTTP_201_CREATED)
         return Response(adopter_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
+
+
 class AdopterList(APIView):
     """
     Lista todos os adotantes cadastrados. ## Apenas para testes
     """
+
     # permission_classes = (permissions.IsAuthenticated,)
     # authentication_classes = (SessionAuthentication,)
     def get(self, request):
         adopters = Adopter.objects.all()
         serializer = AdopterListSerializer(adopters, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
 
 class AdopterDetail(APIView):
     """
@@ -217,12 +219,15 @@ class AdopterDetail(APIView):
 
     def get(self, request):
         user = request.user
-        adopter = Adopter.objects.filter(user=user).first()  # Get adopter associated with the authenticated user
+        adopter = Adopter.objects.filter(user=user).first()
         if not adopter:
-            return Response({"error": "Adotante não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Adotante não encontrado."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         serializer = AdopterListSerializer(adopter)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class AdopterUpdate(APIView):
     """
@@ -234,9 +239,11 @@ class AdopterUpdate(APIView):
 
     def put(self, request):
         user = request.user
-        adopter = Adopter.objects.filter(user=user).first()  # Get adopter associated with the authenticated user
+        adopter = Adopter.objects.filter(user=user).first()
         if not adopter:
-            return Response({"error": "Adotante não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Adotante não encontrado."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         data = request.data
         serializer = AdopterSerializer(adopter, data=data, partial=True)
@@ -244,21 +251,23 @@ class AdopterUpdate(APIView):
             updated_adopter = serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-   
+
+
 class AdopterDelete(APIView):
     """
-    Destroi o adotante do sistema. #apenas para testes
+    Destroi o adotante do sistema.
     """
-    
+
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
-    
+
     def delete(self, request):
         user = request.user
-        adopter = Adopter.objects.filter(user=user).first()  # Get adopter associated with the authenticated user
+        adopter = Adopter.objects.filter(user=user).first()
         if not adopter:
-            return Response({"error": "Adotante não encontrado."}, status=status.HTTP_404_NOT_FOUND)
-    
+            return Response(
+                {"error": "Adotante não encontrado."}, status=status.HTTP_404_NOT_FOUND
+            )
+
         adopter.delete()
         return Response(status=status.HTTP_200_OK)
