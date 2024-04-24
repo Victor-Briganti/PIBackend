@@ -113,7 +113,7 @@ class Address(models.Model):
 
     zip_code = models.CharField(max_length=8)
     street = models.CharField(max_length=100)
-    number = models.CharField(max_length=10)
+    house_number = models.CharField(max_length=10)
     complement = models.CharField(max_length=100, blank=True)
     district = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
@@ -131,7 +131,7 @@ class Adopter(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birth_date = models.DateField()
     address = models.OneToOneField(Address, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=15)
+    phone = models.CharField(max_length=11)
     cpf = models.CharField(max_length=11)
     is_active = models.BooleanField(default=True)
 

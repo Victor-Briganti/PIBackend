@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
-from .models import User, Adopter
+from .models import User, Adopter, Address
 from .serializers import (
     UserSerializer,
     UserLoginSerializer,
@@ -270,3 +270,15 @@ class AdopterDelete(APIView):
 
         adopter.delete()
         return Response(status=status.HTTP_200_OK)
+
+
+class AddressChoices(APIView):
+    """
+    Retorna as opções disponíveis para o endereço.
+    """
+
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        choices = {"state_choices": Address.STATE_CHOICES}
+        return Response(choices, status=status.HTTP_200_OK)
