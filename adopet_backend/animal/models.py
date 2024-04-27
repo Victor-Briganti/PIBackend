@@ -63,9 +63,7 @@ class Animal(models.Model):
     is_active = models.BooleanField(default=True)
     is_vaccinated = models.BooleanField()
     is_castrated = models.BooleanField()
-    is_adopted = models.ForeignKey(
-        Adopter, on_delete=models.CASCADE, null=True, blank=True
-    )
+    is_adopted = models.BooleanField()
 
     def __str__(self):
         return str(self.name)
@@ -73,7 +71,7 @@ class Animal(models.Model):
 
 class ImageAnimal(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="image/", default="")
+    image = models.ImageField(upload_to="image/animals/", default="")
 
     def __str__(self):
         return str(self.image)
