@@ -1,0 +1,83 @@
+from rest_framework import status, permissions
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import State, City, Address
+from .serializers import StateSerializer, CitySerializer, AddressSerializer
+
+# Create your views here.
+
+
+class StateList(APIView):
+    """
+    Lista todos os estados disponíveis.
+    """
+
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, _):
+        state = State.objects.all()
+        serializer = StateSerializer(state, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CityList(APIView):
+    """
+    Lista todas cidades disponíveis.
+    """
+
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, _):
+        city = City.objects.all()
+        serializer = CitySerializer(city, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CityRegister(APIView):
+    """
+    Registra uma nova cidade.
+    Necessário passar um estado junto
+    """
+
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        serializer = CitySerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddressList(APIView):
+    """
+    Lista todos endereços.
+    """
+
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, _):
+        address = Address.objects.all()
+        serializer = AddressSerializer(address, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AddressRegister(APIView):
+    """
+    Registra um novo endereço.
+    Necessário passar uma cidade junto(que por sua vez precisa de um estado)
+    """
+
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        serializer = AddressSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
