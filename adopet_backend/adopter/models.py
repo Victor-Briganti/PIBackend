@@ -32,27 +32,15 @@ class Adopter(models.Model):
 class Adoption(models.Model):
     adopter = models.ForeignKey(Adopter, on_delete=models.CASCADE)
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    staff = models.ForeignKey(User, on_delete=models.CASCADE)
     request_date = models.DateTimeField(auto_now_add=True)
     request_status = models.CharField(null=True, blank=True)
     comments = models.TextField(null=True, blank=True)
-    adopter = models.ForeignKey(Adopter, on_delete=models.CASCADE)
-    animal = models.ForeignKey(
-        Animal, on_delete=models.CASCADE, related_name="animal_registers"
-    )
-    staff = models.ForeignKey(
-        Animal, on_delete=models.CASCADE, related_name="staff_registers"
-    )
-    register_date = models.DateTimeField(auto_now_add=True)
-    request_status = models.CharField(null=True, blank=True)
 
 
 class AnimalRegister(models.Model):
     adopter = models.ForeignKey(Adopter, on_delete=models.CASCADE)
-    animal = models.ForeignKey(
-        Animal, on_delete=models.CASCADE, related_name="animal_registers"
-    )
-    staff = models.ForeignKey(
-        Animal, on_delete=models.CASCADE, related_name="staff_registers"
-    )
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    staff = models.ForeignKey(User, on_delete=models.CASCADE)
     register_date = models.DateTimeField(auto_now_add=True)
     request_status = models.CharField(null=True, blank=True)
