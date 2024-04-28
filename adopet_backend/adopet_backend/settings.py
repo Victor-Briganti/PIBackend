@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "user.apps.UserConfig",
     "animal.apps.AnimalConfig",
     "address.apps.AddressConfig",
+    "adopter.apps.AdopterConfig",
     "rest_framework",
     "corsheaders",
 ]

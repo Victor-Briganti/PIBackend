@@ -196,7 +196,7 @@ class ImageAnimalUpload(APIView):
         animal = Animal.objects.get(pk=animal_id)
         serializer = ImageAnimalSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
-            image = serializer.save(animal=animal)
+            serializer.save(animal=animal)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
