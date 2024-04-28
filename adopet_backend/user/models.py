@@ -47,6 +47,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     # Determina se o usuário tem acesso ao painel de administração
     is_staff = models.BooleanField(default=False)
+    avatar = models.ImageField(
+        upload_to="image/avatar/", default="", null=True, blank=True
+    )
 
     # Sobrescreve o campo objects com um outro gerenciador de usuário
     objects = UserManager()
@@ -74,66 +77,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return str(self.email)
-
-
-class Address(models.Model):
-    """
-    Modelo de endereço.
-    """
-
-    STATE_CHOICES = (
-        ("AC", "Acre"),
-        ("AL", "Alagoas"),
-        ("AP", "Amapá"),
-        ("AM", "Amazonas"),
-        ("BA", "Bahia"),
-        ("CE", "Ceará"),
-        ("DF", "Distrito Federal"),
-        ("ES", "Espírito Santo"),
-        ("GO", "Goiás"),
-        ("MA", "Maranhão"),
-        ("MT", "Mato Grosso"),
-        ("MS", "Mato Grosso do Sul"),
-        ("MG", "Minas Gerais"),
-        ("PA", "Pará"),
-        ("PB", "Paraíba"),
-        ("PR", "Paraná"),
-        ("PE", "Pernambuco"),
-        ("PI", "Piauí"),
-        ("RJ", "Rio de Janeiro"),
-        ("RN", "Rio Grande do Norte"),
-        ("RS", "Rio Grande do Sul"),
-        ("RO", "Rondônia"),
-        ("RR", "Roraima"),
-        ("SC", "Santa Catarina"),
-        ("SP", "São Paulo"),
-        ("SE", "Sergipe"),
-        ("TO", "Tocantins"),
-    )
-
-    zip_code = models.CharField(max_length=8)
-    street = models.CharField(max_length=100)
-    house_number = models.CharField(max_length=10)
-    complement = models.CharField(max_length=100, blank=True)
-    district = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    state = models.CharField(choices=STATE_CHOICES, max_length=2)
-
-    def __str__(self):
-        return str(self.zip_code)
-
-
-class Adopter(models.Model):
-    """
-    Modelo de adotante.
-    """
-
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    birth_date = models.DateField()
-    address = models.OneToOneField(Address, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=11)
-    cpf = models.CharField(max_length=11)
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return str(self.cpf)

@@ -4,7 +4,6 @@ from django.db import models
 from django.core.validators import (
     MinValueValidator,
 )
-from user.models import Adopter
 
 # Create your models here.
 
