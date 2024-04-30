@@ -34,6 +34,7 @@ class UserRegister(APIView):
     # Define as permissões de acesso a essa API.
     # AllowAny: Qualquer usuário pode acessar.
     permission_classes = (permissions.AllowAny,)
+    serializer_class = UserSerializer
 
     def post(self, request):
         try:
@@ -126,6 +127,7 @@ class UserUpdate(APIView):
 
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
+    serializer_class = UserSerializer
 
     def put(self, request):
         data = request.data

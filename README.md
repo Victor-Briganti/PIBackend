@@ -55,13 +55,16 @@ sudo -i -u postgres psql < scripts/createdb.sql
 #############################################################
 
 # Adiciona os animais ao banco de dados
-sudo -i -u postgres psql adopetbd < scripts/createanimal.sql
+sudo -i -u postgres psql adopetbd < scripts/animal.sql
 
 # Adiciona os usuários ao banco de dados
-sudo -i -u postgres psql adopetbd < scripts/createusers.sql
+sudo -i -u postgres psql adopetbd < scripts/user.sql
 
-# Adiciona os imagens ao banco de dados
-sudo -i -u postgres psql adopetbd < scripts/createimage.sql
+# Adiciona os imagens dos animais ao banco de dados
+sudo -i -u postgres psql adopetbd < scripts/animalimage.sql
+
+# Adiciona os estados ao banco de dados
+sudo -i -u postgres psql adopetbd < scripts/state.sql
 ```
 
 ## Contribuindo

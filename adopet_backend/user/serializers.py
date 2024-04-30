@@ -51,7 +51,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = "__all__"
-        read_only_fields = ("email",)
+        # read_only_fields = ("email",)
         extra_kwargs = {"password": {"write_only": True, "min_length": 8}}
 
     def update(self, instance, validated_data):
