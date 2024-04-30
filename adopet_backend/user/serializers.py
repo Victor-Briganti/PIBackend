@@ -18,7 +18,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             password=validated_data["password"],
             firstname=validated_data["firstname"],
             lastname=validated_data["lastname"],
-        )
+        )# ta certo isso?
         return user
 
 
@@ -64,7 +64,7 @@ class UserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class UserMetadataSerializer(serializers.Serializer):
+class UserMetadataSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserMetadata
         fields = "__all__"

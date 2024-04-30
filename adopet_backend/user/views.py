@@ -168,7 +168,7 @@ class UserDetail(APIView):
 
 class UserMetadataRegister(APIView):
     """
-    Registra um adotante.
+    Registra metadados de um usuario.
     """
 
     permission_classes = (permissions.IsAuthenticated,)
@@ -185,7 +185,7 @@ class UserMetadataRegister(APIView):
 
 class UserMetadataUpdate(APIView):
     """
-    Atualiza um adotante.
+    Atualiza um metadado.
     """
 
     permission_classes = (permissions.IsAuthenticated,)
@@ -212,7 +212,7 @@ class UserMetadataUpdate(APIView):
             adopter = UserMetadata.objects.get(id=data["id"])
         except ObjectDoesNotExist:
             return Response(
-                {"error": "Adotante não encontrado"}, status.HTTP_404_NOT_FOUND
+                {"error": "Este usuario não possui metadados"}, status.HTTP_404_NOT_FOUND
             )
 
         serializer = UserMetadataSerializer(adopter, data=data, partial=True)
@@ -225,7 +225,7 @@ class UserMetadataUpdate(APIView):
 
 class UserMetadataDetail(APIView):
     """
-    Retorna o adotante autenticado atual.
+    Retorna o metadado do usuario autenticado atual.
     """
 
     permission_classes = (permissions.IsAuthenticated,)
@@ -238,7 +238,7 @@ class UserMetadataDetail(APIView):
         try:
             adopter = UserMetadata.objects.get(user=user)
         except UserMetadata.DoesNotExist:
-            return Response("Adotante não encontrado", status=status.HTTP_404_NOT_FOUND)
+            return Response("Este usuario não possui metadados", status=status.HTTP_404_NOT_FOUND)
 
         return Response(
             {
@@ -249,5 +249,5 @@ class UserMetadataDetail(APIView):
                 "user": adopter.user.id,
                 "address": adopter.address.id,
             },
-            status=status.HTTP_400_BAD_REQUEST,
+            status=status.HTTP_400_BAD_REQUEST, # status.HTTP_200_OK ? 
         )
