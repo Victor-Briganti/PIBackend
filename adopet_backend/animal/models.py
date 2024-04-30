@@ -1,4 +1,5 @@
 from django.db import models
+from user.models import User
 
 # Verificador usado para limitar valores negativos
 from django.core.validators import (
@@ -41,6 +42,7 @@ class Animal(models.Model):
         ("large", "Grande porte"),
     ]
 
+    donor = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     age = models.CharField(choices=AGE_CHOICES)
     specie = models.CharField(choices=SPECIE_CHOICES)

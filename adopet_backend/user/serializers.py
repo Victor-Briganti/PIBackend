@@ -1,5 +1,6 @@
-from rest_framework import serializers
+from .models import UserMetadata
 from django.contrib.auth import get_user_model, authenticate
+from rest_framework import serializers
 
 # Salva o modelo de usuário atual em uma váriavel.
 # Definido em "AUTH_USER_MODEL"
@@ -61,3 +62,9 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(validated_data.pop("password"))
 
         return super().update(instance, validated_data)
+
+
+class UserMetadataSerializer(serializers.Serializer):
+    class Meta:
+        model = UserMetadata
+        fields = "__all__"

@@ -1,10 +1,11 @@
 # Create your views here.
 from rest_framework import status, permissions
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Animal, ImageAnimal
+from user.models import UserMetadata
 from .serializers import (
     AnimalSerializer,
     ImageAnimalSerializer,
@@ -62,6 +63,18 @@ class AnimalRegister(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
+        # Acessa o usuário realizando a requisição
+        user = request.user
+
+        try:
+            _ = UserMetadata.objects.get(user=user)
+        except UserMetadata.DoesNotExist:
+            return Response(
+                "Usuário não foi propriamente cadastrado",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        request.data["donor"] = user.id
         serializer = AnimalSerializer(data=request.data)
 
         if serializer.is_valid(raise_exception=True):

@@ -1,7 +1,9 @@
-from django.db import models
+from address.models import Address
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import Group, Permission
+from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
@@ -77,3 +79,25 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return str(self.email)
+
+
+class UserMetadata(models.Model):
+    cpf = models.CharField(
+        max_length=11,
+        unique=True,
+        validators=[
+            MinLengthValidator(11),
+            MaxLengthValidator(11),
+        ],
+    )
+    birth_date = models.DateField()
+    phone = models.CharField(
+        max_length=11,
+        validators=[
+            MinLengthValidator(11),
+            MaxLengthValidator(11),
+        ],
+    )
+    is_active = models.BooleanField(default=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
