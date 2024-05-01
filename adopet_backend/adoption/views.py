@@ -105,4 +105,76 @@ class AdoptionRegister(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-   
+class AdoptionUpdate(APIView):
+    """
+    Atualiza uma adoção.
+    """
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def put(self, request, pk):
+        user = request.user
+        data = request.data
+
+        try:
+            _ = UserMetadata.objects.get(user=user)
+        except UserMetadata.DoesNotExist:
+            return Response(
+                "Usuário não foi propriamente cadastrado",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            adoption = Adoption.objects.get(pk=pk)
+        except Adoption.DoesNotExist:
+            return Response(
+                "Adoção não encontrada", status=status.HTTP_404_NOT_FOUND
+            )
+
+        if adoption.donor != user:
+            return Response(
+                "Você não tem permissão para atualizar essa adoção",
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        serializer = AdoptionSerializer(adoption, data=data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class AdoptionDelete(APIView):
+    """
+    Deleta uma adoção.
+    """
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def delete(self, request, pk):
+        user = request.user
+
+        try:
+            _ = UserMetadata.objects.get(user=user)
+        except UserMetadata.DoesNotExist:
+            return Response(
+                "Usuário não foi propriamente cadastrado",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            adoption = Adoption.objects.get(pk=pk)
+        except Adoption.DoesNotExist:
+            return Response(
+                "Adoção não encontrada", status=status.HTTP_404_NOT_FOUND
+            )
+
+        if adoption.donor != user:
+            return Response(
+                "Você não tem permissão para deletar essa adoção",
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        adoption.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

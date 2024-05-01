@@ -249,5 +249,5 @@ class UserMetadataDetail(APIView):
                 "user": adopter.user.id,
                 "address": adopter.address.id,
             },
-            status=status.HTTP_400_BAD_REQUEST, # status.HTTP_200_OK ? 
+            status=status.HTTP_200_OK,
         )
