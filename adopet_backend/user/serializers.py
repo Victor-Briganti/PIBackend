@@ -18,6 +18,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             password=validated_data["password"],
             firstname=validated_data["firstname"],
             lastname=validated_data["lastname"],
+            avatar=validated_data["avatar"],
         )
         return user
 
