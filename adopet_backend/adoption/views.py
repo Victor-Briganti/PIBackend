@@ -6,8 +6,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from user.models import User, UserMetadata
-from user.serializers import UserMetadataSerializer
+from user.models import UserMetadata
 
 # Create your views here.
 
@@ -64,6 +63,7 @@ class AdoptionDetail(APIView):
         serializer = AdoptionSerializer(adoption)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class AdoptionRegister(APIView):
     """
     Registra uma adoção.
@@ -87,9 +87,7 @@ class AdoptionRegister(APIView):
         try:
             animal = Animal.objects.get(pk=data["animal"])
         except Animal.DoesNotExist:
-            return Response(
-                "Animal não encontrado", status=status.HTTP_404_NOT_FOUND
-            )
+            return Response("Animal não encontrado", status=status.HTTP_404_NOT_FOUND)
 
         if animal.is_adopted:
             return Response(
@@ -104,7 +102,8 @@ class AdoptionRegister(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
 class AdoptionUpdate(APIView):
     """
     Atualiza uma adoção.
@@ -128,9 +127,7 @@ class AdoptionUpdate(APIView):
         try:
             adoption = Adoption.objects.get(pk=pk)
         except Adoption.DoesNotExist:
-            return Response(
-                "Adoção não encontrada", status=status.HTTP_404_NOT_FOUND
-            )
+            return Response("Adoção não encontrada", status=status.HTTP_404_NOT_FOUND)
 
         if adoption.donor != user:
             return Response(
@@ -143,7 +140,8 @@ class AdoptionUpdate(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
 class AdoptionDelete(APIView):
     """
     Deleta uma adoção.
@@ -166,9 +164,7 @@ class AdoptionDelete(APIView):
         try:
             adoption = Adoption.objects.get(pk=pk)
         except Adoption.DoesNotExist:
-            return Response(
-                "Adoção não encontrada", status=status.HTTP_404_NOT_FOUND
-            )
+            return Response("Adoção não encontrada", status=status.HTTP_404_NOT_FOUND)
 
         if adoption.donor != user:
             return Response(
