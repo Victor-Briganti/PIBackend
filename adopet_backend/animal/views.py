@@ -127,24 +127,6 @@ class AnimalUpdate(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AnimalChoices(APIView):
-    """
-    Retorna as opções disponíveis para o animal.
-    """
-
-    permission_classes = (permissions.AllowAny,)
-
-    def get(self, request):
-        choices = {
-            "age_choices": Animal.AGE_CHOICES,
-            "coat_choices": Animal.COAT_CHOICES,
-            "gender_choices": Animal.GENDER_CHOICES,
-            "specie_choices": Animal.SPECIE_CHOICES,
-            "size_choices": Animal.SIZE_CHOICES,
-        }
-        return Response(choices, status=status.HTTP_200_OK)
-
-
 class ImageAnimalList(APIView):
     """
     Lista todas as imagens de animais disponíveis.

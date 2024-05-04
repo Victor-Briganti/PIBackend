@@ -1,5 +1,4 @@
 from rest_framework import status, permissions
-from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import State, City, Address
@@ -34,6 +33,23 @@ class CityList(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class CityDetail(APIView):
+    """
+    Retorna a cidade especificada.
+    """
+
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, _, pk):
+        try:
+            city = City.objects.get(pk=pk)
+        except City.DoesNotExists:
+            return Response("Cidade não encontrada", status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CitySerializer(city)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class CityRegister(APIView):
     """
     Registra uma nova cidade.
@@ -62,6 +78,23 @@ class AddressList(APIView):
     def get(self, _):
         address = Address.objects.all()
         serializer = AddressSerializer(address, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AddressDetail(APIView):
+    """
+    Retorna o endereço especifico
+    """
+
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, _, pk):
+        try:
+            address = Address.objects.get(pk=pk)
+        except Address.DoesNotExists:
+            return Response("Endereço não encontrada", status=status.HTTP_404_NOT_FOUND)
+
+        serializer = AddressSerializer(address)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
