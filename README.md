@@ -54,17 +54,28 @@ sudo -i -u postgres psql < scripts/createdb.sql
 #### MIGRATE PRECISA SER FEITO ANTES DOS COMANDOS ABAIXO ####
 #############################################################
 
-# Adiciona os animais ao banco de dados
-sudo -i -u postgres psql adopetbd < scripts/animal.sql
+### A ORDEM ABAIXO PRECISA SER RESPEITADA ###
+
+# Adiciona os estados ao banco de dados
+sudo -i -u postgres psql adopetbd < scripts/state.sql
+
+# Adiciona as cidades ao banco de dados
+sudo -i -u postgres psql adopetbd < scripts/city.sql
+
+# Adiciona as endereços ao banco de dados
+sudo -i -u postgres psql adopetbd < scripts/address.sql
 
 # Adiciona os usuários ao banco de dados
 sudo -i -u postgres psql adopetbd < scripts/user.sql
 
+# Adiciona os metadados de usuário ao banco de dados
+sudo -i -u postgres psql adopetbd < scripts/user_metadata .sql
+
+# Adiciona os animais ao banco de dados
+sudo -i -u postgres psql adopetbd < scripts/animal.sql
+
 # Adiciona os imagens dos animais ao banco de dados
 sudo -i -u postgres psql adopetbd < scripts/animalimage.sql
-
-# Adiciona os estados ao banco de dados
-sudo -i -u postgres psql adopetbd < scripts/state.sql
 ```
 
 ## Contribuindo

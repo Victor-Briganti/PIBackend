@@ -1,70 +1,80 @@
 INSERT INTO public.animal_animal (
-  name, age, coat, weight, size, temperament, 
-  specie, adoption_date, description, 
-  is_house_trained, is_special_needs, 
+  name, age, specie, gender, "size", temperament, 
+  coat, weight, adoption_date, register_date, 
+  description, is_house_trained, is_special_needs, 
   is_active, is_vaccinated, is_castrated, 
-  gender, is_adopted_id
+  is_adopted, donor_id
 ) 
 VALUES 
   (
-    "Ze", "old", "short", 15.0, "small", 
-    "Amigável", "dog", NULL, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 
-    true, false, true, false, false "M", 
-    NULL
-  ), 
+    'Ze', 'adult', 'dog', 'M', 'medium', 
+    NULL, 'short', 15.0, NULL, '2024-05-21 15:28:13.866448-03', 
+    '', true, true, true, false, false, 
+    false, 1
+  ),
   (
-    "Bola", "old", "short", 15.0, "small", 
-    "Agressivo", "cat", NULL, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 
-    true, false, true, false, false "F", 
-    NULL
-  ), 
+    'Edilson', 'puppy', 'dog', 'M', 'large', 
+    NULL, 'short', 61.0, NULL, '2024-05-21 15:28:13.866448-03', 
+    '', true, true, true, false, false, 
+    false, 2
+  ),
   (
-    "Lulu", "puppy", "short", 15.0, "small", 
-    "Dorminhoco", "cat", NULL, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 
-    true, false, true, false, false "F", 
-    NULL
-  ), 
+    'Zephyr', 'old', 'cat', 'F', 'medium', 
+    NULL, 'long', 15.0, NULL, '2024-05-21 15:28:13.866448-03', 
+    '', true, true, true, false, false, 
+    false, 3
+  ),
   (
-    "Amira", "puppy", "long", 13.0, "small", 
-    "Dengoso", "cat", NULL, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 
-    true, false, true, false, false "M", 
-    NULL
-  ), 
+    'Luna', 'puppy', 'cat', 'F', 'medium', 
+    NULL, 'short', 6.0, NULL, '2024-05-21 15:28:13.866448-03', 
+    '', true, true, true, false, false, 
+    false, 2
+  ),
   (
-    "Maguila", "puppy", "short", 13.0, 
-    "small", "Amigável", "dog", NULL, 
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 
-    true, false, true, false, false "M", 
-    NULL
-  ), 
+    'Atlas', 'adult', 'dog', 'M', 'large', 
+    NULL, 'medium', 71.0, NULL, '2024-05-21 15:28:13.866448-03', 
+    '', true, true, true, false, false, 
+    false, 1
+  ),
   (
-    "Aurora", "old", "short", 35.0, "small", 
-    "Amigável", "cat", NULL, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 
-    true, false, true, false, false "F", 
-    NULL
-  ), 
+    'Simba', 'adult', 'dog', 'M', 'medium', 
+    NULL, 'short', 71.0, NULL, '2024-05-21 15:28:13.866448-03', 
+    '', true, true, true, false, false, 
+    false, 2
+  ),
   (
-    "Lilica", "adult", "short", 57.0, "small", 
-    "Amigável", "dog", NULL, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 
-    true, false, true, false, false "M", 
-    NULL
-  ), 
+    'Rocky', 'puppy', 'dog', 'M', 'small', 
+    NULL, 'short', 5.0, NULL, '2024-05-21 15:28:13.866448-03', 
+    '', true, true, true, false, false, 
+    false, 2
+  ),
   (
-    "Caramelo", "adult", "short", 16.0, 
-    "small", "Amigável", "dog", NULL, 
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 
-    true, false, true, false, false "M", 
-    NULL
-  ), 
+    'Coral', 'puppy', 'cat', 'F', 'small', 
+    NULL, 'short', 5.0, NULL, '2024-05-21 15:28:13.866448-03', 
+    '', true, true, true, false, false, 
+    false, 2
+  ),
   (
-    "Bento", "old", "short", 15.0, "small", 
-    "Amigável", "dog", NULL, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 
-    true, false, true, false, false "M", 
-    NULL
-  ), 
+    'Nimbus', 'adult', 'dog', 'M', 'small', 
+    NULL, 'short', 5.0, NULL, '2024-05-21 15:28:13.866448-03', 
+    '', true, true, true, false, false, 
+    false, 3
+  ),
   (
-    "Niko", "old", "short", 15.0, "small", 
-    "Amigável", "dog", NULL, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", 
-    true, false, true, false, false "M", 
-    NULL
+    'Maggy', 'old', 'dog', 'F', 'small', 
+    NULL, 'long', 17.0, NULL, '2024-05-21 15:28:13.866448-03', 
+    '', true, true, true, false, false, 
+    false, 2
+  ),
+  (
+    'Lilica', 'adult', 'dog', 'F', 'large', 
+    NULL, 'short', 4.0, NULL, '2024-05-21 15:28:13.866448-03', 
+    '', true, true, true, false, false, 
+    false, 2
+  ),
+  (
+    'Dottie', 'adult', 'dog', 'F', 'medium', 
+    NULL, 'short', 15.0, NULL, '2024-05-21 15:28:13.866448-03', 
+    '', true, true, true, false, false, 
+    false, 2
   );
