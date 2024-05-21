@@ -13,12 +13,21 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def create(self, validated_data):
-        user = UserModel.objects.create_user(
-            email=validated_data["email"],
-            password=validated_data["password"],
-            firstname=validated_data["firstname"],
-            lastname=validated_data["lastname"],
-        )
+        if "avatar" in validated_data:
+            user = UserModel.objects.create_user(
+                email=validated_data["email"],
+                password=validated_data["password"],
+                firstname=validated_data["firstname"],
+                lastname=validated_data["lastname"],
+                avatar=validated_data["avatar"],
+            )
+        else:
+            user = UserModel.objects.create_user(
+                email=validated_data["email"],
+                password=validated_data["password"],
+                firstname=validated_data["firstname"],
+                lastname=validated_data["lastname"],
+            )
         return user
 
 
