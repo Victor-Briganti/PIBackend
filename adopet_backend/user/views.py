@@ -171,7 +171,7 @@ class UserMetadataRegister(APIView):
     Registra metadados de um usuario.
     """
 
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
     authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
@@ -212,7 +212,8 @@ class UserMetadataUpdate(APIView):
             adopter = UserMetadata.objects.get(id=data["id"])
         except ObjectDoesNotExist:
             return Response(
-                {"error": "Este usuario não possui metadados"}, status.HTTP_404_NOT_FOUND
+                {"error": "Este usuario não possui metadados"},
+                status.HTTP_404_NOT_FOUND,
             )
 
         serializer = UserMetadataSerializer(adopter, data=data, partial=True)
@@ -238,7 +239,9 @@ class UserMetadataDetail(APIView):
         try:
             adopter = UserMetadata.objects.get(user=user)
         except UserMetadata.DoesNotExist:
-            return Response("Este usuario não possui metadados", status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                "Este usuario não possui metadados", status=status.HTTP_404_NOT_FOUND
+            )
 
         return Response(
             {
