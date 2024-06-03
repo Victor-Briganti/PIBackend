@@ -69,7 +69,7 @@ sudo -i -u postgres psql adopetbd < scripts/address.sql
 sudo -i -u postgres psql adopetbd < scripts/user.sql
 
 # Adiciona os metadados de usuário ao banco de dados
-sudo -i -u postgres psql adopetbd < scripts/user_metadata .sql
+sudo -i -u postgres psql adopetbd < scripts/user_metadata.sql
 
 # Adiciona os animais ao banco de dados
 sudo -i -u postgres psql adopetbd < scripts/animal.sql
