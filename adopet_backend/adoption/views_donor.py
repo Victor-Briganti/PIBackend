@@ -84,7 +84,7 @@ class AdoptionDonorDetailByAnimalId(APIView):
             )
 
         try:
-            adoption = Adoption.objects.get(animal=animal)
+            adoption = Adoption.objects.filter(animal=animal)
         except Animal.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
