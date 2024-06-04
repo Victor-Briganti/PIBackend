@@ -36,7 +36,7 @@ class AdoptionList(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class AdoptionDetail(APIView):
+class AdoptionDetailById(APIView):
     """
     Retorna a adoção especifíca.
     """
@@ -57,6 +57,34 @@ class AdoptionDetail(APIView):
 
         try:
             adoption = Adoption.objects.get(pk=pk)
+        except Animal.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = AdoptionSerializer(adoption)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AdoptionDetailByAnimalId(APIView):
+    """
+    Retorna a adoção especifíca.
+    """
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def get(self, request, animal):
+        user = request.user
+
+        try:
+            _ = UserMetadata.objects.get(user=user)
+        except UserMetadata.DoesNotExist:
+            return Response(
+                "Usuário não foi propriamente cadastrado",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            adoption = Adoption.objects.get(animal=animal)
         except Animal.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
