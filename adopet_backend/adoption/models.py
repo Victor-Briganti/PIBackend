@@ -1,6 +1,5 @@
 from django.db import models
 from user.models import User
-from address.models import Address
 from animal.models import Animal
 
 # Create your models here.

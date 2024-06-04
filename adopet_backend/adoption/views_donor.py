@@ -11,7 +11,7 @@ from user.models import UserMetadata
 # Create your views here.
 
 
-class AdoptionList(APIView):
+class AdoptionDonorList(APIView):
     """
     Lista todas as adoções ligadas a esse usuário.
     """
@@ -36,7 +36,7 @@ class AdoptionList(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class AdoptionDetailById(APIView):
+class AdoptionDonorDetailById(APIView):
     """
     Retorna a adoção especifíca.
     """
@@ -64,7 +64,7 @@ class AdoptionDetailById(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class AdoptionDetailByAnimalId(APIView):
+class AdoptionDonorDetailByAnimalId(APIView):
     """
     Retorna a adoção especifíca.
     """
@@ -92,47 +92,7 @@ class AdoptionDetailByAnimalId(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class AdoptionRegister(APIView):
-    """
-    Registra uma adoção.
-    """
-
-    permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (SessionAuthentication,)
-
-    def post(self, request):
-        user = request.user
-        data = request.data
-
-        try:
-            _ = UserMetadata.objects.get(user=user)
-        except UserMetadata.DoesNotExist:
-            return Response(
-                "Usuário não foi propriamente cadastrado",
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            animal = Animal.objects.get(pk=data["animal"])
-        except Animal.DoesNotExist:
-            return Response("Animal não encontrado", status=status.HTTP_404_NOT_FOUND)
-
-        if animal.is_adopted:
-            return Response(
-                "Animal não está mais disponível para adoção",
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        data["donor"] = user.id
-        data["animal"] = animal.id
-        serializer = AdoptionSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class AdoptionUpdate(APIView):
+class AdoptionDonorUpdate(APIView):
     """
     Atualiza uma adoção.
     """
@@ -170,7 +130,7 @@ class AdoptionUpdate(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AdoptionDelete(APIView):
+class AdoptionDonorDelete(APIView):
     """
     Deleta uma adoção.
     """
