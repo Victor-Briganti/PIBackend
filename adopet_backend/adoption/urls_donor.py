@@ -1,4 +1,5 @@
 from django.urls import path
+
 from . import views_donor
 
 urlpatterns = [
@@ -7,6 +8,11 @@ urlpatterns = [
         "<int:pk>",
         views_donor.AdoptionDonorDetailById.as_view(),
         name="adoption_donor_detail_id",
+    ),
+    path(
+        "animal/list/",
+        views_donor.AdoptionDonorAnimalList.as_view(),
+        name="adoption_donor_animal_list",
     ),
     path(
         "animal/<int:animal>",
