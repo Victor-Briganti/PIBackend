@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "adoption.apps.AdoptionConfig",
     "rest_framework",
     "corsheaders",
+    "django_filters",
 ]
 
 MIDDLEWARE = [

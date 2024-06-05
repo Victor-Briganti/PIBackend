@@ -132,21 +132,21 @@ Credenciais para acessar o "/admin" são as seguintes:
 
 ```json
 {
-  "id": 1,
-  "temperament": [],
   "name": "Ze",
-  "age": 12,
+  "age": "adult",
   "specie": "dog",
   "gender": "M",
   "size": "small",
-  "coat": "Curto",
+  "coat": "short",
   "weight": 15.0,
   "adoption_date": null,
   "description": "Grande Ze",
   "is_house_trained": true,
   "is_special_needs": false,
-  "is_active": true,
-  "is_adopted": null
+  "is_castrated": "false",
+  "is_vaccinated":"true",
+  "is_adopted": "false"
+  
 }
 ```
 
@@ -236,20 +236,20 @@ OBS.: Pode receber informações em partes desde que siga o modelo json abaixo
 
 ```json
 {
-  "id": 1,
-  "temperament": [],
   "name": "Ze",
-  "age": 12,
+  "age": "adult",
   "specie": "dog",
   "gender": "M",
   "size": "small",
-  "coat": "Curto",
+  "coat": "short",
   "weight": 15.0,
   "adoption_date": null,
   "description": "Grande Ze",
   "is_house_trained": true,
   "is_special_needs": false,
-  "is_active": true,
-  "is_adopted": null
+  "is_castrated": "false",
+  "is_vaccinated":"true",
+  "is_adopted": "false"
+  
 }
 ```
