@@ -1,5 +1,5 @@
 # Create your views here.
-from rest_framework import permissions, status
+from rest_framework import status, permissions, filters, generics
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -14,6 +14,22 @@ from .serializers import (
 )
 
 
+# class AnimalList(generics.ListAPIView):
+#     """
+#     Lista todos os animais disponíveis para adoção.
+#     Para isso é necessário verificar se o mesmo está ativo(is_active).
+#     """
+#     queryset = Animal.objects.filter(is_active=True)
+#     serializer_class = AnimalSerializer
+#     permission_classes = (permissions.AllowAny,)
+#     pagination_class = PageNumberPagination
+#     filter_backends = (filters.SearchFilter,filters.OrderingFilter)
+#     search_fields = {"name", "description", "temperament", "specie",
+#                     "age", "size", "coat", "weight","gender"}
+
+#     ordering_fields = ["name", "specie", "age", "size", "weight",
+#                     "adopted_date","register_date","is_house_trained","is_special_needs","is_vaccinated","is_castrated"]
+
 class AnimalList(APIView):
     """
     Lista todos os animais disponíveis para adoção.
@@ -22,9 +38,21 @@ class AnimalList(APIView):
 
     permission_classes = (permissions.AllowAny,)
     pagination_class = PageNumberPagination()
+    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    search_fields = {"name", "description", "temperament", "specie",
+                      "age", "size", "coat", "weight","gender"}
+    ordering_fields = ["name", "specie", "age", "size", "weight",
+                       "adopted_date","register_date","is_house_trained","is_special_needs","is_vaccinated","is_castrated",]
+    
 
     def get(self, request):
         animals = Animal.objects.filter(is_active=True)
+
+        search_filter = filters.SearchFilter()
+        ordering_filter = filters.OrderingFilter()
+
+        animals = search_filter.filter_queryset(request, animals, self)
+        animals = ordering_filter.filter_queryset(request, animals, self)
 
         # Adiciona paginação na requisição(se necessário)
         page = self.pagination_class.paginate_queryset(animals, request)
