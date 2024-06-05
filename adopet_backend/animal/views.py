@@ -40,7 +40,7 @@ class AnimalList(APIView):
     pagination_class = PageNumberPagination()
     filter_backends = (filters.SearchFilter, filters.OrderingFilter)
     search_fields = {"name", "description", "temperament", "specie",
-                      "age", "size", "coat", "weight","gender"}
+                      "age", "size", "coat", "weight","gender","donor__email"}
     ordering_fields = ["name", "specie", "age", "size", "weight",
                        "adopted_date","register_date","is_house_trained","is_special_needs","is_vaccinated","is_castrated",]
     

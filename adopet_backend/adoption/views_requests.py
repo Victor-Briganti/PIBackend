@@ -20,7 +20,7 @@ class AdoptionRequestList(APIView):
     authentication_classes = (SessionAuthentication,)
     pagination_class = PageNumberPagination()
     filter_backends = (filters.SearchFilter, filters.OrderingFilter)
-    search_fields = ["request_status","comments"]
+    search_fields = ["request_status","comments","animal__name","animal__specie","animal__coat","animal__size","donor__email"]
     ordering_fields = ["request_date","response_date","request_status"]
 
     def get(self, request):
@@ -38,8 +38,8 @@ class AdoptionRequestList(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        adoption = Adoption.objects.all()
-        adoptions = search_filter.filter_queryset(request, adoption, self)
+        adoptions = Adoption.objects.all()
+        adoptions = search_filter.filter_queryset(request, adoptions, self)
         adoptions = ordering_filter.filter_queryset(request, adoptions, self)
         serializer = AdoptionSerializer(adoptions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
