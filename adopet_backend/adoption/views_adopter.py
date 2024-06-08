@@ -128,7 +128,7 @@ class AdoptionRegister(APIView):
             return Response(
                 "Requisição já realizada", status=status.HTTP_400_BAD_REQUEST
             )
-        except:
+        except Adoption.DoesNotExist:
             serializer = AdoptionSerializer(data=data)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()

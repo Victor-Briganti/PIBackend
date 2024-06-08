@@ -28,7 +28,6 @@ urlpatterns = [
     path("address/", include("address.urls")),
     path("adoption/", include("adoption.urls_adopter")),
     path("donor/", include("adoption.urls_donor")),
-    path("request/", include("adoption.urls_requests")),
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 )  # Adiciona a rota para os arquivos de mídia.

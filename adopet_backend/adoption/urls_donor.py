@@ -29,4 +29,24 @@ urlpatterns = [
         views_donor.AdoptionDonorDelete.as_view(),
         name="adoption_donor_delete",
     ),
+    path(
+        "requests/",
+        views_donor.AdoptionRequestList.as_view(),
+        name="adoption_request_list",
+    ),
+    path(
+        "request/<int:pk>",
+        views_donor.AdoptionRequestDetailById.as_view(),
+        name="adoption_request_detail",
+    ),
+    path(
+        "request/accept/<int:pk>",
+        views_donor.AdoptionRequestAccept.as_view(),
+        name="adoption_request_accept",
+    ),
+    path(
+        "request/reject/<int:pk>",
+        views_donor.AdoptionRequestReject.as_view(),
+        name="adoption_request_reject",
+    ),
 ]
