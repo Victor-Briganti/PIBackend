@@ -7,7 +7,6 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from user.models import UserMetadata
-from animal.models import Animal
 from animal.serializers import AnimalSerializer
 
 # Create your views here.
@@ -130,7 +129,7 @@ class AdoptionDonorDetailByAnimalId(APIView):
         except Animal.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        serializer = AdoptionSerializer(adoption)
+        serializer = AdoptionSerializer(adoption, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
