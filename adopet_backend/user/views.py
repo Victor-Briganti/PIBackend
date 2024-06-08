@@ -254,3 +254,42 @@ class UserMetadataDetail(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class UserAdopterDetail(APIView):
+    """
+    Retorna o informações sobre o usuário realizando a adoção.
+    """
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def get(self, request, adopter):
+        user = request.user
+
+        try:
+            _ = UserMetadata.objects.get(user=user)
+        except UserMetadata.DoesNotExist:
+            return Response(
+                "Este usuario não possui metadados", status=status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            adopter_common = User.objects.get(pk=adopter)
+            adopter_metadata = UserMetadata.objects.get(user=adopter_common)
+        except User.DoesNotExist:
+            return Response("Adopter not found", status=status.HTTP_404_NOT_FOUND)
+        except UserMetadata.DoesNotExist:
+            return Response(
+                "Metadata not found for the adopter", status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = UserSerializer(adopter_common)
+        data = serializer.data
+        data["phone"] = adopter_metadata.phone
+        data.pop("is_active", None)
+        data.pop("is_staff", None)
+        data.pop("groups", None)
+        data.pop("user_permissions", None)
+        data.pop("last_login", None)
+        return Response(data, status=status.HTTP_200_OK)

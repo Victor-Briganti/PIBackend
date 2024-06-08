@@ -17,4 +17,7 @@ urlpatterns = [
     path(
         "metadata/update/", views.UserMetadataUpdate.as_view(), name="usermeta_update"
     ),
+    path(
+        "adopter/<int:adopter>", views.UserAdopterDetail.as_view(), name="user_adopter"
+    ),
 ]
