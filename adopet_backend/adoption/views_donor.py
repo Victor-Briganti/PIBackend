@@ -76,6 +76,44 @@ class AdoptionDonorAnimalList(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class AdoptionRequestAnimalList(APIView):
+    """
+    Lista todas as doações pendentes de animais ligadas a esse usuário.
+    """
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+    pagination_class = PageNumberPagination()
+
+    def get(self, request):
+        user = request.user
+
+        try:
+            _ = UserMetadata.objects.get(user=user)
+        except UserMetadata.DoesNotExist:
+            return Response(
+                "Usuário não foi propriamente cadastrado",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        adoptions = Adoption.objects.filter(donor=user, request_status="pending")
+
+        unique_animal_ids = set()
+        for adoption in adoptions:
+            unique_animal_ids.add(adoption.animal_id)
+
+        unique_animals = Animal.objects.filter(id__in=unique_animal_ids)
+
+        # Paginate the result
+        page = self.pagination_class.paginate_queryset(unique_animals, request)
+        if page is not None:
+            serializer = AnimalSerializer(page, many=True)
+            return self.pagination_class.get_paginated_response(serializer.data)
+
+        serializer = AnimalSerializer(unique_animals, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class AdoptionDonorDetailById(APIView):
     """
     Retorna a doação especifíca.
