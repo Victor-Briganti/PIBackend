@@ -40,12 +40,12 @@ class AdoptionDonorList(APIView):
 
 class AdoptionDonorAnimalList(APIView):
     """
-    Lista todas as doações de animais ligadas a esse usuário.
+    Lista todas as doações aceitas de animais ligadas a esse usuário.
     """
 
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
-    pagination_class = PageNumberPagination()  # Add pagination class
+    pagination_class = PageNumberPagination()
 
     def get(self, request):
         user = request.user
@@ -58,14 +58,12 @@ class AdoptionDonorAnimalList(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        adoptions = Adoption.objects.filter(donor=user)
+        adoptions = Adoption.objects.filter(donor=user, request_status="approved")
 
-        # Extract unique animal IDs
         unique_animal_ids = set()
         for adoption in adoptions:
             unique_animal_ids.add(adoption.animal_id)
 
-        # Fetch corresponding animal instances
         unique_animals = Animal.objects.filter(id__in=unique_animal_ids)
 
         # Paginate the result
