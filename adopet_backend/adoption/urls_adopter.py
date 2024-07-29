@@ -14,6 +14,11 @@ urlpatterns = [
         name="adoption_detail_animalId",
     ),
     path(
+        "adopter/<int:animal>",
+        views_adopter.AdoptionDetailByAdopter.as_view(),
+        name="adoption_detail_adopter",
+    ),
+    path(
         "register/", views_adopter.AdoptionRegister.as_view(), name="adoption_register"
     ),
 ]
