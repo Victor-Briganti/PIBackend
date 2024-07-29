@@ -1,4 +1,5 @@
-from .models import UserMetadata
+from address.models import Address
+from .models import UserMetadata, User
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework import serializers
 
@@ -73,7 +74,12 @@ class UserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
+
 class UserMetadataSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
+    address = serializers.PrimaryKeyRelatedField(queryset=Address.objects.all(), required=False)
+
     class Meta:
         model = UserMetadata
+        # fields = ['cpf', 'birth_date', 'phone', 'user', 'address']
         fields = "__all__"
