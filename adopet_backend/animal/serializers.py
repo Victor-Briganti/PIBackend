@@ -12,7 +12,12 @@ from .models import ImageAnimal, Animal
 class ImageAnimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImageAnimal
-        fields = "__all__"
+        fields = ["id", "image"]
+
+    def create(self, validated_data):
+        animal = self.context['animal'] 
+        validated_data['animal'] = animal
+        return super().create(validated_data)
 
 
 class AnimalSerializer(serializers.ModelSerializer):

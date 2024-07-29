@@ -5,6 +5,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from user.models import UserMetadata
+from django.db import transaction
 
 from .models import Animal, ImageAnimal
 from .serializers import (
@@ -128,8 +129,9 @@ class AnimalRegister(APIView):
         serializer = AnimalSerializer(data=request.data)
 
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            request.session["animal_data"] = serializer.data
+            request.session.modified = True
+            return Response({"message" : "Dados do animal salvos. Aguardando imagem "}, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -236,14 +238,28 @@ class ImageAnimalUpload(APIView):
     serializer_class = ImageAnimalSerializer
 
     def post(self, request):
+        if "animal_data" not in request.session:
+            return Response(
+                "Dados do animal não encontrados. Por favor, registre o animal antes de adicionar uma imagem.",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
         data = request.data
-        animal_id = data["animal"]
-        animal = Animal.objects.get(pk=animal_id)
-        serializer = ImageAnimalSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(animal=animal)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        animal_data = request.session["animal_data"]
+        with transaction.atomic():
+            animal_serializer = AnimalSerializer(data = animal_data)
+            animal_serializer.is_valid(raise_exception=True)
+            animal = animal_serializer.save()
+
+
+            data['animal'] = animal.id
+            serializer = ImageAnimalSerializer(data=data, context={"animal": animal})
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                request.session.flush()
+
+                return Response({"message": "Cadastro de animal concluido com sucesso"}, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ImageAnimalUpdate(APIView):
