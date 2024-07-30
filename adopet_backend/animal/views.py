@@ -15,22 +15,6 @@ from .serializers import (
 )
 
 
-# class AnimalList(generics.ListAPIView):
-#     """
-#     Lista todos os animais disponíveis para adoção.
-#     Para isso é necessário verificar se o mesmo está ativo(is_active).
-#     """
-#     queryset = Animal.objects.filter(is_active=True)
-#     serializer_class = AnimalSerializer
-#     permission_classes = (permissions.AllowAny,)
-#     pagination_class = PageNumberPagination
-#     filter_backends = (filters.SearchFilter,filters.OrderingFilter)
-#     search_fields = {"name", "description", "temperament", "specie",
-#                     "age", "size", "coat", "weight","gender"}
-
-#     ordering_fields = ["name", "specie", "age", "size", "weight",
-#                     "adopted_date","register_date","is_house_trained","is_special_needs","is_vaccinated","is_castrated"]
-
 class AnimalList(APIView):
     """
     Lista todos os animais disponíveis para adoção.
@@ -40,11 +24,31 @@ class AnimalList(APIView):
     permission_classes = (permissions.AllowAny,)
     pagination_class = PageNumberPagination()
     filter_backends = (filters.SearchFilter, filters.OrderingFilter)
-    search_fields = {"name", "description", "temperament", "specie",
-                      "age", "size", "coat", "weight","gender","donor__email"}
-    ordering_fields = ["name", "specie", "age", "size", "weight",
-                       "adopted_date","register_date","is_house_trained","is_special_needs","is_vaccinated","is_castrated",]
-    
+    search_fields = {
+        "name",
+        "description",
+        "temperament",
+        "specie",
+        "age",
+        "size",
+        "coat",
+        "weight",
+        "gender",
+        "donor__email",
+    }
+    ordering_fields = [
+        "name",
+        "specie",
+        "age",
+        "size",
+        "weight",
+        "adopted_date",
+        "register_date",
+        "is_house_trained",
+        "is_special_needs",
+        "is_vaccinated",
+        "is_castrated",
+    ]
 
     def get(self, request):
         animals = Animal.objects.filter(is_active=True)
@@ -131,7 +135,10 @@ class AnimalRegister(APIView):
         if serializer.is_valid(raise_exception=True):
             request.session["animal_data"] = serializer.data
             request.session.modified = True
-            return Response({"message" : "Dados do animal salvos. Aguardando imagem "}, status=status.HTTP_201_CREATED)
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED,
+            )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -243,22 +250,24 @@ class ImageAnimalUpload(APIView):
                 "Dados do animal não encontrados. Por favor, registre o animal antes de adicionar uma imagem.",
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         data = request.data
         animal_data = request.session["animal_data"]
         with transaction.atomic():
-            animal_serializer = AnimalSerializer(data = animal_data)
+            animal_serializer = AnimalSerializer(data=animal_data)
             animal_serializer.is_valid(raise_exception=True)
             animal = animal_serializer.save()
 
-
-            data['animal'] = animal.id
+            data["animal"] = animal.id
             serializer = ImageAnimalSerializer(data=data, context={"animal": animal})
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 request.session.flush()
 
-                return Response({"message": "Cadastro de animal concluido com sucesso"}, status=status.HTTP_201_CREATED)
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_201_CREATED,
+                )
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
