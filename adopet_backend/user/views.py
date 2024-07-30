@@ -13,7 +13,6 @@ from rest_framework.views import APIView
 from django.db import transaction
 
 
-
 from address.serializers import AddressSerializer
 from .models import User, UserMetadata
 from .serializers import (
@@ -31,7 +30,6 @@ from .validation import (
 # Create your views here.
 
 
-
 class UserRegister(APIView):
     """
     Registra um usuário comum na aplicação.
@@ -44,14 +42,18 @@ class UserRegister(APIView):
             data = validate_user(request.data)
         except ValidationError as err:
             return Response(err, status=status.HTTP_400_BAD_REQUEST)
-        
+
         serializer = UserRegisterSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
-            request.session['user_data'] = serializer.validated_data
+            request.session["user_data"] = serializer.validated_data
             request.session.modified = True
-            return Response({"message": "User data saved. Proceed to address step."}, status=status.HTTP_201_CREATED)
-        
+            return Response(
+                serializer.validated_data,
+                status=status.HTTP_201_CREATED,
+            )
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class UserLogin(APIView):
     """
@@ -178,37 +180,43 @@ class UserMetadataRegister(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def post(self, request):
-        if 'user_data' not in request.session or 'address_data' not in request.session:
-            return Response({"error": "Previous registration steps not completed."}, status=status.HTTP_400_BAD_REQUEST)
-        
+        if "user_data" not in request.session or "address_data" not in request.session:
+            return Response(
+                {"error": "Registro anterior não foi realizado."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = UserMetadataSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             metadata_data = serializer.validated_data
-            
-            user_data = request.session['user_data']
-            address_data = request.session['address_data']
-            
-           
+
+            user_data = request.session["user_data"]
+            address_data = request.session["address_data"]
+
             with transaction.atomic():
                 user_serializer = UserSerializer(data=user_data)
                 user_serializer.is_valid(raise_exception=True)
                 user = user_serializer.save()
+                user_serializer.update(user, user_data)
 
                 address_serializer = AddressSerializer(data=address_data)
                 address_serializer.is_valid(raise_exception=True)
                 address = address_serializer.save()
 
-                metadata_data['user'] = user.id
-                metadata_data['address'] = address.id
+                metadata_data["user"] = user.id
+                metadata_data["address"] = address.id
                 metadata_serializer = UserMetadataSerializer(data=metadata_data)
                 metadata_serializer.is_valid(raise_exception=True)
                 metadata = metadata_serializer.save()
-                
+
                 # Clear the session
                 request.session.flush()
-                
-                return Response({"message": "User registration completed successfully."}, status=status.HTTP_201_CREATED)
-        
+
+                return Response(
+                    metadata_serializer.data,
+                    status=status.HTTP_201_CREATED,
+                )
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

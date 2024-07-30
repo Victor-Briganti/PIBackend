@@ -98,23 +98,6 @@ class AddressDetail(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-# class AddressRegister(APIView):
-#     """
-#     Registra um novo endereço.
-#     Necessário passar uma cidade junto(que por sua vez precisa de um estado)
-#     """
-
-#     permission_classes = (permissions.AllowAny,)
-
-#     def post(self, request):
-#         serializer = AddressSerializer(data=request.data)
-
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 class AddressRegister(APIView):
     """
     Registra um novo endereço.
@@ -124,13 +107,16 @@ class AddressRegister(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        if 'user_data' not in request.session:
-            return Response({"error": "User registration step 1 not completed."}, status=status.HTTP_400_BAD_REQUEST)
-        
+        if "user_data" not in request.session:
+            return Response(
+                {"error": "User registration step 1 not completed."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = AddressSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            request.session['address_data'] = serializer.validated_data
+            request.session["address_data"] = serializer.validated_data
             request.session.modified = True
-            return Response({"message": "Address data saved. Proceed to metadata step."}, status=status.HTTP_201_CREATED)
-        
+            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
