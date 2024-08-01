@@ -7,6 +7,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from user.models import UserMetadata
+from animal.serializers import AnimalSerializer
 
 # Create your views here.
 
@@ -33,6 +34,45 @@ class AdoptionList(APIView):
 
         adoption = Adoption.objects.filter(adopter=user)
         serializer = AdoptionSerializer(adoption, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AdoptionAnimalsList(APIView):
+    """
+    Lista todos os animais associados às adoções do usuário.
+    """
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+    pagination_class = PageNumberPagination()
+
+    def get(self, request):
+        user = request.user
+
+        try:
+            _ = UserMetadata.objects.get(user=user)
+        except UserMetadata.DoesNotExist:
+            return Response(
+                "Usuário não foi propriamente cadastrado",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Requisita uma lista e usuários que realizaram adoções que foram aceitas
+        adoptions = Adoption.objects.filter(adopter=user, request_status="approved")
+
+        # Retorna o ID dos animais
+        unique_animal_ids = set(adoption.animal_id for adoption in adoptions)
+
+        # Busca os animais baseado em seus IDs
+        unique_animals = Animal.objects.filter(id__in=unique_animal_ids)
+
+        # Coloca os resultado em paginação
+        page = self.pagination_class.paginate_queryset(unique_animals, request)
+        if page is not None:
+            serializer = AnimalSerializer(page, many=True)
+            return self.pagination_class.get_paginated_response(serializer.data)
+
+        serializer = AnimalSerializer(unique_animals, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
