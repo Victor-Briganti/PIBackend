@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from user.models import UserMetadata
 from animal.serializers import AnimalSerializer
 from django.utils import timezone
+from django.core.mail import send_mail
 
 # Create your views here.
 
@@ -345,6 +346,13 @@ class AdoptionRequestAccept(APIView):
         adoption.save()
         adoption.animal.save()
         serializer = AdoptionSerializer(adoption)
+        email = adoption.adopter.email
+        send_mail(
+            "adocao",
+            "sua adocao foi aprovada.",
+            "adopet6@gmail.com",
+            [email], fail_silently=True
+        )
 
         remains = Adoption.objects.filter(
             animal=adoption.animal, request_status="pending"
@@ -353,6 +361,12 @@ class AdoptionRequestAccept(APIView):
             remain.request_status = "rejected"
             remain.response_date = timezone.now()
             remain.save()
+            send_mail(
+                "adocao",
+                "sua adocao foi rejeitada.",
+                "adopet6@gmail.com",
+                [remain.donor.email], fail_silently=True
+            )
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -386,5 +400,12 @@ class AdoptionRequestReject(APIView):
         adoption.request_status = "rejected"
         adoption.response_date = timezone.now()
         adoption.save()
+        email = adoption.adopter.email
+        send_mail(
+            "adocao",
+            "sua adocao foi rejeitada.",
+            "adopet6@gmail.com",
+            [email], fail_silently=True
+        )
         serializer = AdoptionSerializer(adoption)
         return Response(serializer.data, status=status.HTTP_200_OK)
