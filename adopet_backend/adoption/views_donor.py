@@ -10,6 +10,7 @@ from user.models import UserMetadata
 from animal.serializers import AnimalSerializer
 from django.utils import timezone
 from django.core.mail import send_mail
+from adopet_backend.settings import EMAIL_HOST_USER
 
 # Create your views here.
 
@@ -350,7 +351,7 @@ class AdoptionRequestAccept(APIView):
         send_mail(
             "adocao",
             "sua adocao foi aprovada.",
-            "adopet6@gmail.com",
+            EMAIL_HOST_USER,
             [email], fail_silently=True
         )
 
@@ -364,8 +365,8 @@ class AdoptionRequestAccept(APIView):
             send_mail(
                 "adocao",
                 "sua adocao foi rejeitada.",
-                "adopet6@gmail.com",
-                [remain.donor.email], fail_silently=True
+                EMAIL_HOST_USER,
+                [remain.adopter.email], fail_silently=True
             )
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -404,7 +405,7 @@ class AdoptionRequestReject(APIView):
         send_mail(
             "adocao",
             "sua adocao foi rejeitada.",
-            "adopet6@gmail.com",
+            EMAIL_HOST_USER,
             [email], fail_silently=True
         )
         serializer = AdoptionSerializer(adoption)
