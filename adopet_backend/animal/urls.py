@@ -9,6 +9,11 @@ urlpatterns = [
     path("", views.AnimalList.as_view(), name="animal_list"),
     path("donor/", views.AnimalDonorList.as_view(), name="animal_donor_list"),
     path("<int:pk>", views.AnimalDetail.as_view(), name="animal_detail"),
+    path(
+        "<int:pk>/donor/",
+        views.AnimalDonorDetail.as_view(),
+        name="animal_donor_detail",
+    ),
     path("register/", views.AnimalRegister.as_view(), name="animal_register"),
     path("delete/<int:pk>", views.AnimalDelete.as_view(), name="animal_delete"),
     path("update/<int:pk>", views.AnimalUpdate.as_view(), name="animal_update"),

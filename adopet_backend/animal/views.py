@@ -1,11 +1,11 @@
 # Create your views here.
-from rest_framework import status, permissions, filters, generics
+from rest_framework import status, permissions, filters
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from user.models import UserMetadata
-from django.db import transaction
+from user.serializers import UserSerializer
 
 from .models import Animal, ImageAnimal
 from .serializers import (
@@ -183,6 +183,32 @@ class AnimalUpdate(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class AnimalDonorDetail(APIView):
+    """
+    Retorna o doador de um animal específico.
+    """
+
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, _, pk):
+        try:
+            # Get the animal by primary key (pk)
+            animal = Animal.objects.get(pk=pk, is_active=True)
+        except Animal.DoesNotExist:
+            return Response("Animal não encontrado", status=status.HTTP_404_NOT_FOUND)
+
+        # Get the donor associated with the animal
+        donor = animal.donor
+
+        if not donor:
+            return Response("Doador não encontrado", status=status.HTTP_404_NOT_FOUND)
+
+        # Serialize the donor data
+        serializer = UserSerializer(donor)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class ImageAnimalList(APIView):
     """
     Lista todas as imagens de animais disponíveis.
@@ -252,7 +278,6 @@ class ImageAnimalUpload(APIView):
             serializer.save(animal=animal)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class ImageAnimalUpdate(APIView):
