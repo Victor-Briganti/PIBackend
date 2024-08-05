@@ -11,6 +11,7 @@ from animal.serializers import AnimalSerializer
 from django.utils import timezone
 from django.core.mail import send_mail
 from adopet_backend.settings import EMAIL_HOST_USER
+from user.views import UserSerializer
 
 # Create your views here.
 
@@ -113,6 +114,27 @@ class AdoptionRequestAnimalList(APIView):
             return self.pagination_class.get_paginated_response(serializer.data)
 
         serializer = AnimalSerializer(unique_animals, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AdoptionRequestUserDetail(APIView):
+    """
+    Retorna um usuário específico que está solicitando um animal.
+    """
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+
+    def get(self, request, pk):
+        # Requisita uma adoção pendente para o animal especificado
+        try:
+            adoption = Adoption.objects.get(pk=pk, request_status="pending")
+            requesting_user = adoption.adopter
+        except Adoption.DoesNotExist:
+            return Response({"detail": "Adoção não encontrada."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Serializa o usuário
+        serializer = UserSerializer(requesting_user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -352,7 +374,8 @@ class AdoptionRequestAccept(APIView):
             "adocao",
             "sua adocao foi aprovada.",
             EMAIL_HOST_USER,
-            [email], fail_silently=True
+            [email],
+            fail_silently=True,
         )
 
         remains = Adoption.objects.filter(
@@ -366,7 +389,8 @@ class AdoptionRequestAccept(APIView):
                 "adocao",
                 "sua adocao foi rejeitada.",
                 EMAIL_HOST_USER,
-                [remain.adopter.email], fail_silently=True
+                [remain.adopter.email],
+                fail_silently=True,
             )
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -406,7 +430,8 @@ class AdoptionRequestReject(APIView):
             "adocao",
             "sua adocao foi rejeitada.",
             EMAIL_HOST_USER,
-            [email], fail_silently=True
+            [email],
+            fail_silently=True,
         )
         serializer = AdoptionSerializer(adoption)
         return Response(serializer.data, status=status.HTTP_200_OK)
