@@ -22,7 +22,7 @@ class Animal(models.Model):
 
     COAT_CHOICES = [
         ("short", "Curto"),
-        ("medium", "Médio"),
+        ("average", "Médio"),
         ("long", "Longo"),
     ]
 

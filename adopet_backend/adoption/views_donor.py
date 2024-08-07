@@ -362,6 +362,12 @@ class AdoptionRequestAccept(APIView):
             return Response(
                 "Solicitação de adoção não encontrada", status=status.HTTP_404_NOT_FOUND
             )
+        
+        if adoption.request_status != "pending":
+            return Response(
+                "Solicitação de adoção não está pendente",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         adoption.request_status = "approved"
         adoption.animal.is_adopted = True
