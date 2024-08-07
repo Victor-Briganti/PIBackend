@@ -105,7 +105,7 @@ class AdoptionRequestAnimalList(APIView):
         for adoption in adoptions:
             unique_animal_ids.add(adoption.animal_id)
 
-        unique_animals = Animal.objects.filter(id__in=unique_animal_ids)
+        unique_animals = Animal.objects.filter(id__in=unique_animal_ids, is_adopted=False)
 
         # Paginate the result
         page = self.pagination_class.paginate_queryset(unique_animals, request)
@@ -131,7 +131,9 @@ class AdoptionRequestUserDetail(APIView):
             adoption = Adoption.objects.get(pk=pk, request_status="pending")
             requesting_user = adoption.adopter
         except Adoption.DoesNotExist:
-            return Response({"detail": "Adoção não encontrada."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "Adoção não encontrada."}, status=status.HTTP_404_NOT_FOUND
+            )
 
         # Serializa o usuário
         serializer = UserSerializer(requesting_user)
@@ -362,8 +364,8 @@ class AdoptionRequestAccept(APIView):
             return Response(
                 "Solicitação de adoção não encontrada", status=status.HTTP_404_NOT_FOUND
             )
-        
-        if adoption.request_status != "pending":
+
+        if adoption.request_status != "pending" or adoption.animal.is_adopted:
             return Response(
                 "Solicitação de adoção não está pendente",
                 status=status.HTTP_400_BAD_REQUEST,
