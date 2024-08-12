@@ -33,6 +33,7 @@ class AdoptionList(APIView):
             )
 
         adoption = Adoption.objects.filter(adopter=user)
+        adoption = adoption.order_by("-response_date","-request_date")
         serializer = AdoptionSerializer(adoption, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -59,12 +60,13 @@ class AdoptionAnimalsList(APIView):
 
         # Requisita uma lista e usuários que realizaram adoções que foram aceitas
         adoptions = Adoption.objects.filter(adopter=user, request_status="approved")
-
         # Retorna o ID dos animais
         unique_animal_ids = set(adoption.animal_id for adoption in adoptions)
 
         # Busca os animais baseado em seus IDs
+        
         unique_animals = Animal.objects.filter(id__in=unique_animal_ids)
+        unique_animals = unique_animals.order_by("-adoption_date")
 
         # Coloca os resultado em paginação
         page = self.pagination_class.paginate_queryset(unique_animals, request)

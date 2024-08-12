@@ -37,6 +37,7 @@ class AdoptionDonorList(APIView):
             )
 
         adoption = Adoption.objects.filter(donor=user)
+        adoption = adoption.order_by("-response_date", "-request_date")
         serializer = AdoptionSerializer(adoption, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -62,12 +63,12 @@ class AdoptionDonorAnimalList(APIView):
             )
 
         adoptions = Adoption.objects.filter(donor=user, request_status="approved")
-
         unique_animal_ids = set()
         for adoption in adoptions:
             unique_animal_ids.add(adoption.animal_id)
 
         unique_animals = Animal.objects.filter(id__in=unique_animal_ids)
+        unique_animals = unique_animals.order_by("-adoption_date")
 
         # Paginate the result
         page = self.pagination_class.paginate_queryset(unique_animals, request)
@@ -100,6 +101,7 @@ class AdoptionRequestAnimalList(APIView):
             )
 
         adoptions = Adoption.objects.filter(donor=user, request_status="pending")
+        adoptions = adoptions.order_by("-request_date")
 
         unique_animal_ids = set()
         for adoption in adoptions:
@@ -305,6 +307,7 @@ class AdoptionRequestList(APIView):
         adoptions = Adoption.objects.all()
         adoptions = search_filter.filter_queryset(request, adoptions, self)
         adoptions = ordering_filter.filter_queryset(request, adoptions, self)
+        adoptions = adoptions.order_by("-response_date","-request_date")
         serializer = AdoptionSerializer(adoptions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -374,13 +377,15 @@ class AdoptionRequestAccept(APIView):
         adoption.request_status = "approved"
         adoption.animal.is_adopted = True
         adoption.response_date = timezone.now()
+        adoption.animal.adoption_date = timezone.now()
         adoption.save()
         adoption.animal.save()
         serializer = AdoptionSerializer(adoption)
         email = adoption.adopter.email
+        animal_name = adoption.animal.name
         send_mail(
             "adocao",
-            "sua adocao foi aprovada.",
+            f"sua adocao foi aprovada para o animal {animal_name}.",
             EMAIL_HOST_USER,
             [email],
             fail_silently=True,
@@ -395,7 +400,7 @@ class AdoptionRequestAccept(APIView):
             remain.save()
             send_mail(
                 "adocao",
-                "sua adocao foi rejeitada.",
+                f"sua adocao foi rejeitada para o animal {remain.animal.name}.",
                 EMAIL_HOST_USER,
                 [remain.adopter.email],
                 fail_silently=True,
@@ -436,7 +441,7 @@ class AdoptionRequestReject(APIView):
         email = adoption.adopter.email
         send_mail(
             "adocao",
-            "sua adocao foi rejeitada.",
+            f"sua adocao foi rejeitada para o animal {adoption.animal.name}.",
             EMAIL_HOST_USER,
             [email],
             fail_silently=True,

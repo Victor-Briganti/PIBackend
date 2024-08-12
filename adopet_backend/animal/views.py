@@ -44,7 +44,7 @@ class AnimalList(APIView):
         "age",
         "size",
         "weight",
-        "adopted_date",
+        "adoption_date",
         "register_date",
         "is_house_trained",
         "is_special_needs",
@@ -54,12 +54,13 @@ class AnimalList(APIView):
 
     def get(self, request):
         animals = Animal.objects.filter(is_active=True)
-
+        animals = animals.order_by("is_adopted","-adoption_date","-register_date")
         search_filter = filters.SearchFilter()
         ordering_filter = filters.OrderingFilter()
 
         animals = search_filter.filter_queryset(request, animals, self)
         animals = ordering_filter.filter_queryset(request, animals, self)
+        
 
         # Adiciona paginação na requisição(se necessário)
         page = self.pagination_class.paginate_queryset(animals, request)
@@ -83,6 +84,7 @@ class AnimalDonorList(APIView):
     def get(self, request):
         user = self.request.user
         animals = Animal.objects.filter(is_active=True, donor=user)
+        animals = animals.order_by("is_adopted","-adoption_date","-register_date")
 
         # Adiciona paginação na requisição(se necessário)
         page = self.pagination_class.paginate_queryset(animals, request)
