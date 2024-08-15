@@ -37,7 +37,7 @@ VALUES
     false, 1
   ),
   (
-    'Simba', 'old', 'dog', 'M', 'medium',
+    'Simba', 'old', 'cat', 'M', 'medium',
     NULL, 'average', 12.0, NULL, '2024-05-21 15:28:13.866448-03',
     '', true, true, true, false, false,
     false, 2
