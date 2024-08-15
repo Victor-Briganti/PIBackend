@@ -107,7 +107,9 @@ class AdoptionRequestAnimalList(APIView):
         for adoption in adoptions:
             unique_animal_ids.add(adoption.animal_id)
 
-        unique_animals = Animal.objects.filter(id__in=unique_animal_ids, is_adopted=False)
+        unique_animals = Animal.objects.filter(
+            id__in=unique_animal_ids, is_adopted=False, is_active=True
+        )
 
         # Paginate the result
         page = self.pagination_class.paginate_queryset(unique_animals, request)
@@ -307,7 +309,7 @@ class AdoptionRequestList(APIView):
         adoptions = Adoption.objects.all()
         adoptions = search_filter.filter_queryset(request, adoptions, self)
         adoptions = ordering_filter.filter_queryset(request, adoptions, self)
-        adoptions = adoptions.order_by("-response_date","-request_date")
+        adoptions = adoptions.order_by("-response_date", "-request_date")
         serializer = AdoptionSerializer(adoptions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
