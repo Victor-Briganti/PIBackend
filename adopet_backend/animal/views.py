@@ -71,11 +71,12 @@ class AnimalList(APIView):
         serializer = AnimalSerializer(animals, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class AnimalListAdopted(APIView):
+
+class AnimalListCarousel(APIView):
     permission_classes = (permissions.AllowAny,)
     def get (self,request):
-        animals = Animal.objects.filter(is_active=True,is_adopted=True)
-        animals = animals.order_by("-adoption_date","-register_date")
+        animals = Animal.objects.filter(is_active=True)
+        animals = animals.order_by("-register_date")
         animals = animals[:5]
 
         serializer = AnimalSerializer(animals, many=True)

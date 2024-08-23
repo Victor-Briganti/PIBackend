@@ -7,7 +7,7 @@ router = routers.DefaultRouter()
 urlpatterns = [
     # Endpoints para o animal.
     path("", views.AnimalList.as_view(), name="animal_list"),
-    path("adopted/", views.AnimalListAdopted.as_view(), name="animal_adopted_list"),
+    path("carousel/", views.AnimalListCarousel.as_view(), name="animal_adopted_list"),
     path("donor/", views.AnimalDonorList.as_view(), name="animal_donor_list"),
     path("<int:pk>", views.AnimalDetail.as_view(), name="animal_detail"),
     path(
