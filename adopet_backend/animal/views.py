@@ -75,7 +75,7 @@ class AnimalList(APIView):
 class AnimalListCarousel(APIView):
     permission_classes = (permissions.AllowAny,)
     def get (self,request):
-        animals = Animal.objects.filter(is_active=True)
+        animals = Animal.objects.filter(is_active=True,is_adopted=False)
         animals = animals.order_by("-register_date")
         animals = animals[:5]
 
