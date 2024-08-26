@@ -1,5 +1,5 @@
 from .models import Adoption
-from .serializers import AdoptionSerializer
+from .serializers import AdoptionSerializer, AdoptionDetailSerializer
 from animal.models import Animal
 from rest_framework import status, permissions, filters
 from rest_framework.authentication import SessionAuthentication
@@ -311,6 +311,43 @@ class AdoptionRequestList(APIView):
         adoptions = ordering_filter.filter_queryset(request, adoptions, self)
         adoptions = adoptions.order_by("-response_date", "-request_date")
         serializer = AdoptionSerializer(adoptions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AdoptionRequestDetail(APIView):
+    """
+    Retorna a solicitação de adoção de acordo com o id da própria solicitação
+    """
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (SessionAuthentication,)
+    pagination_class = PageNumberPagination()
+
+    def get(self, request):
+        user = request.user
+
+        try:
+            _ = UserMetadata.objects.get(user=user)
+        except UserMetadata.DoesNotExist:
+            return Response(
+                "Usuário não foi propriamente cadastrado",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            adoptions = Adoption.objects.filter(donor=user, request_status="pending")
+        except Adoption.DoesNotExist:
+            return Response(
+                "Solicitações de adoção não encontradas",
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        page = self.pagination_class.paginate_queryset(adoptions, request)
+        if page is not None:
+            serializer = AdoptionDetailSerializer(page, many=True)
+            return self.pagination_class.get_paginated_response(serializer.data)
+
+        serializer = AdoptionDetailSerializer(adoptions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

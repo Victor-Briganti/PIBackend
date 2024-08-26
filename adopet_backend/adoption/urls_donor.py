@@ -45,6 +45,11 @@ urlpatterns = [
         name="adoption_request_list",
     ),
     path(
+        "requests/detail",
+        views_donor.AdoptionRequestDetail.as_view(),
+        name="adoption_request_detail_list",
+    ),
+    path(
         "request/<int:pk>",
         views_donor.AdoptionRequestDetailById.as_view(),
         name="adoption_request_detail",
