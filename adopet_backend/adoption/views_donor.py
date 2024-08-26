@@ -1,3 +1,4 @@
+from .pagination import DonationsDetailPagination
 from .models import Adoption
 from .serializers import AdoptionSerializer, AdoptionDetailSerializer
 from animal.models import Animal
@@ -321,7 +322,7 @@ class AdoptionRequestDetail(APIView):
 
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
-    pagination_class = PageNumberPagination()
+    pagination_class = DonationsDetailPagination()
 
     def get(self, request):
         user = request.user
