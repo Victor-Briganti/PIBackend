@@ -10,10 +10,9 @@ from rest_framework.views import APIView
 from user.models import UserMetadata
 from animal.serializers import AnimalSerializer
 from django.utils import timezone
-from django.core.mail import send_mail
-from adopet_backend.settings import EMAIL_HOST_USER
 from user.views import UserSerializer
-
+import threading
+from .utils import send_adoption_email
 # Create your views here.
 
 
@@ -421,15 +420,8 @@ class AdoptionRequestAccept(APIView):
         adoption.save()
         adoption.animal.save()
         serializer = AdoptionSerializer(adoption)
-        email = adoption.adopter.email
-        animal_name = adoption.animal.name
-        send_mail(
-            "adocao",
-            f"sua adocao foi aprovada para o animal {animal_name}.",
-            EMAIL_HOST_USER,
-            [email],
-            fail_silently=True,
-        )
+        threading.Thread(target=send_adoption_email,
+                         args = (adoption.adopter.email, f"Sua solicitação de adoção para o animal {adoption.animal.name} foi aceita.")).start()
 
         remains = Adoption.objects.filter(
             animal=adoption.animal, request_status="pending"
@@ -438,15 +430,13 @@ class AdoptionRequestAccept(APIView):
             remain.request_status = "rejected"
             remain.response_date = timezone.now()
             remain.save()
-            send_mail(
-                "adocao",
-                f"sua adocao foi rejeitada para o animal {remain.animal.name}.",
-                EMAIL_HOST_USER,
-                [remain.adopter.email],
-                fail_silently=True,
-            )
+            
+            threading.Thread(target=send_adoption_email,
+                         args = (remain.adopter.email, f"Sua solicitação de adoção para o animal {remain.animal.name} foi rejeitada.")).start()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
 
 
 class AdoptionRequestReject(APIView):
@@ -478,13 +468,7 @@ class AdoptionRequestReject(APIView):
         adoption.request_status = "rejected"
         adoption.response_date = timezone.now()
         adoption.save()
-        email = adoption.adopter.email
-        send_mail(
-            "adocao",
-            f"sua adocao foi rejeitada para o animal {adoption.animal.name}.",
-            EMAIL_HOST_USER,
-            [email],
-            fail_silently=True,
-        )
+        threading.Thread(target=send_adoption_email,
+                         args = (adoption.adopter.email, f"Sua solicitação de adoção para o animal {adoption.animal.name} foi rejeitada.")).start()
         serializer = AdoptionSerializer(adoption)
         return Response(serializer.data, status=status.HTTP_200_OK)
