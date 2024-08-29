@@ -155,7 +155,7 @@ class AdoptionDetailByAdopter(APIView):
 
         try:
             adoption = Adoption.objects.get(animal=animal, adopter=user)
-        except Animal.DoesNotExist:
+        except Adoption.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         serializer = AdoptionSerializer(adoption)
